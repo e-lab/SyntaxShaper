@@ -1,0 +1,31 @@
+----------------------
+EventIdea_BudgetPlan:
+```
+{
+  "EventIdea": {
+    "EventType": The type of event being planned (e.g., wedding, conference, birthday) # (<class 'str'>),
+    "ThemeIdeas": Potential themes for the event # (<class 'list'>)
+},
+  "BudgetPlan": {
+    "EstimatedCost": Estimated total cost for the event # (<class 'float'>),
+    "BudgetBreakdown": A breakdown of costs by category # (<class 'dict'>)
+}
+}
+```
+
+EventSchedule:
+```
+{
+    "Date": The scheduled date for the event # (<class 'str'>),
+    "Activities": A list of planned activities and their timings # (<class 'list'>)
+}
+```
+
+USE THE ['EventIdea_BudgetPlan'] FOR BRAINSTORMING EVENT IDEAS.
+USE THE ['EventSchedule'] FOR PLANNING OUT ACTIVITIES AND TIMINGS.
+
+Test data
+
+
+RETURN ALL OF ['EventIdea_BudgetPlan'], ['EventSchedule']
+----------------------
