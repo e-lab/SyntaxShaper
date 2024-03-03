@@ -8,17 +8,22 @@ class TOML:
         grammar, instruct = "", []
         for task in tasks:
             model = task.get('model')
-            command = task.get('task_name', '')
-            if isinstance(model, list):
-                name = "_".join([m.__name__ for m in model])
-            else:
-                name = model.__name__
-                model = [model]
-            instruct.append(name)
+            if hasattr(model, '__name__'):
+                if isinstance(model, list):
+                    name = "_".join([m.__name__ for m in model])
+                else:
+                    name = model.__name__
+                    model = [model]
+            else: 
+                name = "For query: " + repr(task.get('query'))
+                if not isinstance(model, list):
+                    model = [task.get('model')]
+            if name: instruct.append(name)
 
             variables = ModelParser.extract_variables_with_descriptions(model)
             forma = TOML.generate_prompt_from_variables(variables, nested=True)
-            grammar += f"{name}:\n```\n{forma}\n```\n\n"
+            if isinstance(name, str): grammar += f'{name}:\n'
+            grammar += f"{name}:\n```\n{forma}\n```\n"
 
 
         return grammar, instruct
@@ -31,24 +36,15 @@ class TOML:
                 prompt_lines.append(f"[{model_name}]")
             for var_name, details in fields.items():
                 line = f'{var_name} = '
-                line += f'# Type: {details["type"]}'
-                if details.get('description'): line += f' | "{details["description"]}"'
+                if 'value' in details: line += f'"{details["value"]}"'
+                else: 
+                    line += f'# Type: {details["type"]}'
+                    if details.get('description'): line += f' | "{details["description"]}"'
 
-                if str(details.get("default")) not in ['PydanticUndefined', 'None']:
-                    line += f', Default: "{details["default"]}"'
+                    if str(details.get("default")) not in ['PydanticUndefined', 'None']:
+                        line += f', Default: "{details["default"]}"'
                 prompt_lines.append(line)
         return "\n".join(prompt_lines)
-
-    @staticmethod
-    def _generate_single_model_prompt(fields: dict, model_name: str, nested: bool = False) -> dict:
-        model_data = {}
-        for var_name, details in fields.items():
-            model_data[var_name] = {
-                'description': details['description'],
-                'type': details['type'],
-                'default': details['default'] if str(details.get("default")) != 'PydanticUndefined' else None
-            }
-        return model_data
     
     @staticmethod
     def parse_toml(toml_string):
@@ -73,7 +69,6 @@ class TOML:
             start = i
             while toml_string[i] not in '=':
                 i += 1
-            print('in key', toml_string[start:i])
             return toml_string[start:i], i
 
         def parse_value(toml_string, i):

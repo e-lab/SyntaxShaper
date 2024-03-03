@@ -5,16 +5,17 @@ import re
 
 class GNBF:
     TYPE_RULES = {
-        'bool': r'("True" | "False") ws',
-        'number': r'("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws',
-        'integer': r'("-"? ([0-9] | [1-9] [0-9]*)) ws',
+        'bool': r'("True" | "False")',
+        'number': r'("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)?',
+        'integer': r'("-"? ([0-9] | [1-9] [0-9]*))',
         'string': r'''
             "\"" (
             [^"\\] |
             "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
-            )* "\"" ws
+            )* "\""
         ''',
-        'none': r'"None" ws',
+        # 'string': r'"\""   ([^"]*)   "\"" ws',
+        'none': r'None',
     }
 
     OBJECT_RULES = { 
@@ -111,7 +112,7 @@ class GNBF:
             return self.convert_type(schema_type)
         elif schema_type in self.OBJECT_RULES:
             rule, types = self.OBJECT_RULES[schema_type]
-            print(types)
+            # print(types)
             rule = rule.format(value=f"{name}-value").strip()
 
             if 'items' in schema and schema['items']:

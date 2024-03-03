@@ -8,19 +8,25 @@ class JSON:
         grammar, instruct = "", []
         for task in tasks:
             model = task.get('model')
-            if isinstance(model, list):
-                name = "_".join([m.__name__ for m in model])
-            else:
-                name = model.__name__
-                model = [model]
-            instruct.append(name)
+            if hasattr(model, '__name__'):
+                if isinstance(model, list):
+                    name = "_".join([m.__name__ for m in model])
+                else:
+                    name = model.__name__
+                    model = [model]
+            else: 
+                name = "For query: " + repr(task.get('query'))
+                if not isinstance(model, list):
+                    model = [task.get('model')]
+           
+            if name: instruct.append(name)
 
             variables = ModelParser.extract_variables_with_descriptions(model)
             if len(variables) > 1:
                 forma = JSON.generate_prompt_from_variables(variables, nested=True)
             else: 
                 forma = JSON.generate_prompt_from_variables(variables)
-            grammar += f"{name}:\n```\n{forma}\n```\n\n"
+            grammar += f"{name}:\n```\n{forma}\n```\n"
 
         return grammar, instruct
 
@@ -38,11 +44,13 @@ class JSON:
     def _generate_single_model_prompt(fields: dict, model_name: str, nested: bool = False) -> str:
         prompt_lines = [f'"{model_name}": ' + "{" if nested else "{"]
         for var_name, details in fields.items():
-            line = f'"{var_name}": '
-            line += f'# Type: {details["type"]}'
-            if details.get('description'): line += f' | {details["description"]}'
-            if str(details.get("default")) not in ['PydanticUndefined', 'None']:
-                line += f', Default: "{details["default"]}"'
+            line = f'"{var_name}": ' 
+            if 'value' in details: line += f'{details["value"]}'
+            else:
+                line += f'# Type: {details["type"]}'
+                if details.get('description'): line += f' | {details["description"]}'
+                if str(details.get("default")) not in ['PydanticUndefined', 'None']:
+                    line += f' | Default: "{details["default"]}"'
             line += ","
             prompt_lines.append(line)
         prompt_lines[-1] = prompt_lines[-1].rstrip(',')  
