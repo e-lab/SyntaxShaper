@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.DS_Store
+env/
+venv/
+.idea/
+
+./*.egg-info
+./dist/
+
+/gnbf.ipynb

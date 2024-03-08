@@ -3,56 +3,65 @@ from constrain.grammars.json import JSON
 from constrain.grammars.toml import TOML
 from constrain.grammars.xml import XML
 
+
 class Constrainer:
     def __init__(self, prompt):
         self.config = {}
         if isinstance(prompt, str):
-            prompt_config = PromptBuilder() 
-            prompt_config.add_editable_section('grammar', text="{grammar}", placeholder='grammar', define_grammar=True)
-            prompt_config.add_editable_section('user_query', text="{query}", placeholder='query')
+            prompt_config = PromptBuilder()
+            prompt_config.add_section(define_grammar=True)
+            prompt_config.add_section(text=prompt)
             self.prompt = prompt_config
         elif isinstance(prompt, PromptBuilder) or isinstance(prompt, Prompt):
-            self.prompt = prompt 
-        else: 
-            raise ValueError('Prompt must be a string, a PromptBuilder or a Prompt object')
+            self.prompt = prompt
+        else:
+            raise ValueError(
+                'Prompt must be a string, a PromptBuilder or a Prompt object.')
 
         # Keeps track of last run for inflation_rate()
         self.user_prompt = None
         self.filled_prompt = None
-        self.inflation = None 
+        self.inflation = None
 
     def set_config(self, format, return_sequence):
         self.config['format'] = format
         self.config['return_sequence'] = return_sequence
 
-    def format_prompt(self, placeholders, tasks, examples = None):
+    def format_prompt(self, tasks, placeholders=None, examples=None):
         if not self.prompt:
             raise ValueError('Prompt is not set!')
-        if not tasks: 
-            raise ValueError('You need to provide a list of tasks to format the prompt!')
-        
+        if not tasks:
+            raise ValueError(
+                'You need to provide a list of tasks to format the prompt!')
+
         self.config['tasks'] = tasks
         self.config['examples'] = examples
-        
-        if isinstance(self.prompt, Prompt): 
-            if not placeholders: 
-                raise ValueError(f'If your prompt uses placeholders in the template, you need to provide `placeholders` too! Ensure they have these keys: {self.prompt.placeholders}')
+
+        if not placeholders:
+            placeholders = {}
+
+        print('Prompt is ', type(self.prompt))
+        if isinstance(self.prompt, Prompt):
+            if not self.prompt.placeholders:
+                raise ValueError(
+                    f'If your prompt uses placeholders in the template, you need to provide `placeholders` too! Ensure they have these keys: {self.prompt.placeholders}.')
             self.user_prompt = filled_prompt = self.prompt.fill(**placeholders)
         elif isinstance(self.prompt, PromptBuilder):
             built_prompt, self.user_prompt = self.prompt.build(self.config)
             self.user_prompt = self.user_prompt.fill(**placeholders)
             filled_prompt = built_prompt.fill(**placeholders)
-        
-        self.filled_prompt = filled_prompt
-        self.prompt = filled_prompt
-    
-    def parse(self, return_value): 
+
+        self.prompt = self.filled_prompt = filled_prompt
+
+    def parse(self, return_value):
         if not self.config['format']:
             raise ValueError('Serialization type is not set!')
 
         if isinstance(return_value, str):
-            returned_objects = [bru.replace('\n', '') for bru in return_value.split('```')[1::2] if bru.replace('\n', '').strip()]
-        else: 
+            return_value = return_value.replace('json', '').replace('xml', '').replace('toml', '')
+            returned_objects = [bru.replace('\n', '') for bru in return_value.split('```')[
+                1::2] if bru.replace('\n', '').strip()]
+        else:
             returned_objects = return_value
 
         if len(returned_objects) == 1:
@@ -67,19 +76,20 @@ class Constrainer:
             return [self.parse([return_value.replace('```', '')])]
         else:
             to_return = []
-            for value in returned_objects: 
+            for value in returned_objects:
                 to_return += [self.parse([value])]
             return to_return
-        
-    def inflation_rate(self): 
-        if self.inflation: 
+
+    def inflation_rate(self):
+        if self.inflation:
             if self.inflation['prompt'] == self.filled_prompt:
                 return {k: v for k, v in self.inflation.items() if k not in "prompt"}
 
         import tiktoken
+
         encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 
-        def get_count(text): 
+        def get_count(text):
             return len(encoding.encode(text))
 
         self.inflation = {
@@ -92,9 +102,8 @@ class Constrainer:
 
         return {k: v for k, v in self.inflation.items() if k not in "prompt"}
 
-
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass 
+        pass

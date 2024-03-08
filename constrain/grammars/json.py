@@ -2,58 +2,86 @@ from pydantic import BaseModel
 from typing import List, Optional
 from constrain.tools.pydantic import ModelParser
 
+
 class JSON:
     @staticmethod
     def make_format(tasks: List[dict], return_sequence: str) -> str:
         grammar, instruct = "", []
         for task in tasks:
             model = task.get('model')
-            if hasattr(model, '__name__'):
-                if isinstance(model, list):
-                    name = "_".join([m.__name__ for m in model])
-                else:
-                    name = model.__name__
-                    model = [model]
-            else: 
-                name = "For query: " + repr(task.get('query'))
-                if not isinstance(model, list):
-                    model = [task.get('model')]
-           
-            if name: instruct.append(name)
 
-            variables = ModelParser.extract_variables_with_descriptions(model)
-            if len(variables) > 1:
-                forma = JSON.generate_prompt_from_variables(variables, nested=True)
+            if isinstance(model, list):
+                if not task.get('query'): 
+                    name = "_".join([m.__name__ for m in model])
             else: 
-                forma = JSON.generate_prompt_from_variables(variables)
+                if hasattr(model, '__name__'):
+                    name = model.__name__
+                model = [model]
+            
+            if task.get('query'):
+                name = "For query: " + repr(task.get('query'))
+
+            if name:
+                instruct.append(name)
+
+            variables, nested_models = ModelParser.extract_variables_with_descriptions(model)
+
+            if nested_models:
+                forma = JSON.generate_prompt_from_variables({name: variables[name]})
+                del variables[name]
+            else: 
+                if len(variables) > 1:
+                        forma = JSON.generate_prompt_from_variables(
+                            variables, nested=True)
+                else:
+                    forma = JSON.generate_prompt_from_variables(variables)
+
             grammar += f"{name}:\n```\n{forma}\n```\n"
+
+            if nested_models:
+                grammar += "Use the data types given below to fill in the above model\n```\n"
+                # print(variables)
+                for variable in variables:
+                    # print('variable is', variable)
+                    grammar += f"{JSON.generate_prompt_from_variables({variable: variables[variable]}, ignore=True)}\n"
+                grammar += "```"
 
         return grammar, instruct
 
     @staticmethod
-    def generate_prompt_from_variables(variables_info: dict, nested: bool = False) -> str:
-        prompt_lines = ["{"]
+    def generate_prompt_from_variables(variables_info: dict, nested: bool = False, ignore=False) -> str:
+        if not ignore: prompt_lines = ["{"] 
+        else : prompt_lines = []
         for model_name, fields in variables_info.items():
-            model_prompt = JSON._generate_single_model_prompt(fields, model_name, nested=True)
+            model_prompt = JSON._generate_single_model_prompt(
+                fields, model_name, nested=True)
             prompt_lines.append(f'{model_prompt},')
-        prompt_lines[-1] = prompt_lines[-1].rstrip(',')  # Ensure proper JSON formatting
-        prompt_lines.append("}")
+        # Ensure proper JSON formatting
+        prompt_lines[-1] = prompt_lines[-1].rstrip(',')
+        if not ignore: prompt_lines.append("}")
         return "\n".join(prompt_lines)
 
     @staticmethod
     def _generate_single_model_prompt(fields: dict, model_name: str, nested: bool = False) -> str:
         prompt_lines = [f'"{model_name}": ' + "{" if nested else "{"]
         for var_name, details in fields.items():
-            line = f'"{var_name}": ' 
-            if 'value' in details: line += f'{details["value"]}'
+            # print(var_name, details)
+            line = f'"{var_name}": '
+            if 'value' in details:
+                line += f'{details["value"]}'
             else:
                 line += f'# Type: {details["type"]}'
-                if details.get('description'): line += f' | {details["description"]}'
+                if details.get('description'):
+                    line += f' | {details["description"]}'
+                if not details.get("required"):
+                    pass # Expected to be required
+                else: 
+                    line += " | Optional"
                 if str(details.get("default")) not in ['PydanticUndefined', 'None']:
                     line += f' | Default: "{details["default"]}"'
             line += ","
             prompt_lines.append(line)
-        prompt_lines[-1] = prompt_lines[-1].rstrip(',')  
+        prompt_lines[-1] = prompt_lines[-1].rstrip(',')
         prompt_lines.append("    }" if nested else "}")
         return "\n".join(prompt_lines)
 
@@ -113,7 +141,8 @@ class JSON:
                 key, i = parse_string(json_string, i)
                 i = skip_whitespace(json_string, i)
                 if json_string[i] != ':':
-                    raise ValueError(f'Expected ":" at {i}, got {json_string[i]}')
+                    raise ValueError(
+                        f'Expected ":" at {i}, got {json_string[i]}')
                 i = skip_whitespace(json_string, i + 1)
                 value, i = parse_value(json_string, i)
                 obj[key] = value
@@ -130,5 +159,5 @@ class JSON:
         return parse_value(json_string, skip_whitespace(json_string, 0))[0]
 
     @staticmethod
-    def parse(text): 
+    def parse(text):
         return JSON.parse_json(text)

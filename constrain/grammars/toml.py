@@ -2,29 +2,30 @@ from pydantic import BaseModel
 from typing import List, Optional
 from constrain.tools.pydantic import ModelParser
 
+
 class TOML:
     @staticmethod
     def make_format(tasks: List[dict], return_sequence: str) -> str:
         grammar, instruct = "", []
         for task in tasks:
             model = task.get('model')
-            if hasattr(model, '__name__'):
-                if isinstance(model, list):
+            if isinstance(model, list):
+                if not task.get('query'): 
                     name = "_".join([m.__name__ for m in model])
-                else:
-                    name = model.__name__
-                    model = [model]
             else: 
+                if hasattr(model, '__name__'):
+                    name = model.__name__
+                model = [model]
+            
+            if task.get('query'):
                 name = "For query: " + repr(task.get('query'))
-                if not isinstance(model, list):
-                    model = [task.get('model')]
-            if name: instruct.append(name)
+
+            if name:
+                instruct.append(name)
 
             variables = ModelParser.extract_variables_with_descriptions(model)
             forma = TOML.generate_prompt_from_variables(variables, nested=True)
-            if isinstance(name, str): grammar += f'{name}:\n'
             grammar += f"{name}:\n```\n{forma}\n```\n"
-
 
         return grammar, instruct
 
@@ -36,16 +37,18 @@ class TOML:
                 prompt_lines.append(f"[{model_name}]")
             for var_name, details in fields.items():
                 line = f'{var_name} = '
-                if 'value' in details: line += f'"{details["value"]}"'
-                else: 
+                if 'value' in details:
+                    line += f'"{details["value"]}"'
+                else:
                     line += f'# Type: {details["type"]}'
-                    if details.get('description'): line += f' | "{details["description"]}"'
+                    if details.get('description'):
+                        line += f' | "{details["description"]}"'
 
                     if str(details.get("default")) not in ['PydanticUndefined', 'None']:
                         line += f', Default: "{details["default"]}"'
                 prompt_lines.append(line)
         return "\n".join(prompt_lines)
-    
+
     @staticmethod
     def parse_toml(toml_string):
         def parse_section(toml_string, i):
@@ -61,7 +64,8 @@ class TOML:
                 if toml_string[i] == '=':
                     i = skip_whitespace(toml_string, i + 1)
                     value, i = parse_value(toml_string, i)
-                    section[key.replace('\n', '').replace(' ', '')][subkey.replace('\n', '').replace(' ', '')] = value
+                    section[key.replace('\n', '').replace(' ', '')][subkey.replace(
+                        '\n', '').replace(' ', '')] = value
                 i = skip_whitespace(toml_string, i)
             return section, i
 
@@ -92,7 +96,7 @@ class TOML:
                 i += 1
 
             val = toml_string[start:i]
-            try: 
+            try:
                 if '.' in val:
                     return float(val), i
                 return int(val), i
@@ -106,23 +110,23 @@ class TOML:
                 # print('in array', toml_string[:i])
                 # print('after array', toml_string[i].strip().replace('\n', ''))
                 value, i = parse_value(toml_string, i)
-                # print('value', value)   
+                # print('value', value)
                 array.append(value)
                 j = skip_whitespace(toml_string, i + 1)
                 if toml_string[i] == ']':
                     break
                 i = j
                 # print('right after array', toml_string[:i])
-            
+
             array = [x for x in array if x]
             return array, i + 1
 
         def skip_whitespace(toml_string, i):
             while i < len(toml_string) and toml_string[i] in [
-                ' ', '\n', '\t', '\r']:
+                    ' ', '\n', '\t', '\r']:
                 i += 1
             return i
-        
+
         i = 0
         storage = {}
         while i < len(toml_string):
@@ -137,7 +141,7 @@ class TOML:
             else:
                 break
         return storage
-    
+
     @staticmethod
     def parse(text):
         return TOML.parse_toml(text)

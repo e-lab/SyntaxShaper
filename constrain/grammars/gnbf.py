@@ -1,4 +1,5 @@
 from llama_cpp import Llama, LlamaGrammar
+from pydantic import BaseModel
 import json
 import re
 
@@ -8,23 +9,21 @@ class GNBF:
         'bool': r'("True" | "False")',
         'number': r'("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)?',
         'integer': r'("-"? ([0-9] | [1-9] [0-9]*))',
-        'string': r'''
-            "\"" (
+        'string': r''' "\"" (
             [^"\\] |
             "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
-            )* "\""
-        ''',
+            )* "\""''',
         # 'string': r'"\""   ([^"]*)   "\"" ws',
         'none': r'None',
     }
 
-    OBJECT_RULES = { 
-        'range': [r'"range(" number "," number "," number ")"', ['number']], 
+    OBJECT_RULES = {
+        'range': [r'"range(" number "," number "," number ")"', ['number']],
         'array': [r'''
             "[" ws (
                 {value}
                 ("," ws {value})*
-            )? "]" ws''', ['string', 'number', 'bool', 'none']], 
+            )? "]" ws''', ['string', 'number', 'bool', 'none']],
         'toml': [r'''
             toml ::= "[" key "]" (key "="  {value})*
             key ::= string
@@ -44,16 +43,15 @@ class GNBF:
             yaml ::= key ":"  {value}
             key ::= string
         ''', ['string', 'number', 'bool', 'none', 'array']],
-        }
+    }
 
-    def __init__(self, json_obj):
-        self.json_obj = json_obj
+    def __init__(self, model: BaseModel):
+        self.json_obj = model.schema()
         self.rules = {"ws": r'[ \t\n]*'}
         self.used_data_types = set()
         self.grammar_entries = []
 
-    @staticmethod
-    def sanitize_rule_name(name):
+    def sanitize_rule_name(self, name):
         return re.sub(r'[^a-zA-Z0-9-]+', '-', name)
 
     def add_rule(self, name, definition):
@@ -77,16 +75,17 @@ class GNBF:
             for definition_name, definition_schema in schema['definitions'].items():
                 self.handle_schema(definition_schema, definition_name)
 
-        if '$ref' in schema:
-            return schema['$ref'].split('/')[-1]
+        if 'items' in schema and '$ref' in schema['items']:
+            return schema['items']['$ref'].split('/')[-1]
 
         schema_type = schema.get('type')
-        if schema_type: schema_type=schema_type.lower()
-        # print(schema_type, name)
+        if schema_type:
+            schema_type = schema_type.lower()
 
         if not schema_type:
             if 'anyOf' in schema:
-                types = [self.handle_schema(sub_schema, name) for sub_schema in schema['anyOf']]
+                types = [self.handle_schema(sub_schema, name)
+                         for sub_schema in schema['anyOf']]
 
                 self.add_rule(name, ' | '.join(types))
                 return name
@@ -95,35 +94,37 @@ class GNBF:
             properties = schema['properties']
             prop_definitions = []
             for prop, prop_schema in properties.items():
-                # print(prop, prop_schema)
                 prop_name = self.format_literal(prop)
                 prop_type = self.handle_schema(prop_schema, prop)
+                if prop_type == None: 
+                    print(prop_schema)
                 prop_definitions.append(f'{prop_name}:" ws {prop_type}')
             properties_rule = r' "," ws '.join(prop_definitions)
             rule = f'"{{" ws {properties_rule} "}}" ws'
             if name == 'root':
-                self.grammar_entries.insert(0, f"{self.json_obj['title']} ::= {rule}")  
-                self.grammar_entries.insert(0, f"{name} ::= {self.json_obj['title']} ws")
+                self.grammar_entries.insert(
+                    0, f"{self.json_obj['title']} ::= {rule}")
+                self.grammar_entries.insert(
+                    0, f"{name} ::= {self.json_obj['title']} ws")
             else:
                 self.add_rule(name, rule)
         elif schema_type in self.TYPE_RULES:
-            # print('in type rules', schema_type, name)
             self.add_rule(schema_type, self.TYPE_RULES[schema_type])
             return self.convert_type(schema_type)
         elif schema_type in self.OBJECT_RULES:
             rule, types = self.OBJECT_RULES[schema_type]
-            # print(types)
             rule = rule.format(value=f"{name}-value").strip()
 
             if 'items' in schema and schema['items']:
                 types = [self.handle_schema(schema['items'], name)]
-            else: 
+            else:
                 for i, t in enumerate(types):
                     if t not in self.rules:
                         self.add_rule(t, self.TYPE_RULES[t])
                         self.convert_type(t)
 
-            rule += "\n{value} ::= {type}".format(value=f"{name}-value", type=' | '.join(types))
+            rule += "\n{value} ::= {type}".format(
+                value=f"{name}-value", type=' | '.join(types))
 
             for t in types:
                 self.convert_type(t)
@@ -134,12 +135,16 @@ class GNBF:
             return self.add_rule(name, ' | '.join(enum_values))
         elif 'const' in schema:
             return self.format_literal(schema['const'])
+
+        
         return name
 
     def generate_grammar(self):
         self.handle_schema(self.json_obj)
-        self.grammar_entries += [f'{name} ::= {rule}' for name, rule in self.rules.items()]
+        self.grammar_entries += [f'{name} ::= {rule}' for name,
+                                 rule in self.rules.items()]
         return '\n'.join(self.grammar_entries).lower().replace('_', '-')
-      
-    def verify_grammar(self, grammar): 
+
+    @staticmethod
+    def verify_grammar(grammar: str):
         return LlamaGrammar.from_string(grammar)

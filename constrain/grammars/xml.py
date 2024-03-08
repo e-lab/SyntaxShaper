@@ -2,7 +2,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from constrain.tools.pydantic import ModelParser
 
-class XML: 
+
+class XML:
     @staticmethod
     def make_format(tasks: List[dict], return_sequence: str) -> str:
         grammar, instruct = "", []
@@ -10,19 +11,19 @@ class XML:
             model = task.get('model')
 
             if isinstance(model, list):
-                if hasattr(model[0], '__name__'):
+                if not task.get('query'): 
                     name = "_".join([m.__name__ for m in model])
-                else:
-                    name = "_".join([m.__class__.__name__ for m in model])
             else: 
                 if hasattr(model, '__name__'):
                     name = model.__name__
-                    model = [model]
-                else:
-                    name = "For query: " + repr(task.get('query'))
-                    model = [task.get('model')]
+                model = [model]
+            
+            if task.get('query'):
+                name = "For query: " + repr(task.get('query'))
 
-            if name: instruct.append(name)
+
+            if name:
+                instruct.append(name)
 
             variables = ModelParser.extract_variables_with_descriptions(model)
             forma = XML.generate_prompt_from_variables(variables, nested=True)
@@ -40,7 +41,7 @@ class XML:
                 line = f'<{var_name}>'
                 if 'value' in details:
                     line += f' {details["value"]} </{var_name}>'
-                else: 
+                else:
                     line += f' #{details["type"]}# </{var_name}>'
                     if details.get('description'):
                         line += f' # {details["description"]}'
@@ -81,35 +82,40 @@ class XML:
             while xml_string[i] != '>':
                 i += 1
             tag = xml_string[start:i]
-            if ' ' in tag:
-                tag, attr = tag.split(' ', 1)
-                attr = dict(item.split('=') for item in attr.split())
-            else:
+            try: 
+                if ' ' in tag:
+                    tag, attr = tag.split(' ', 1)
+                    attr = dict(item.split('=') for item in attr.split())
+                else:
+                    attr = {}
+            except: 
                 attr = {}
-            
+
             add_val_attr(tag, '', attr)
 
             return tag, i + 1
 
         def add_val_attr(tag, value, attr):
-            temp = {} 
-            if value and value.strip() not in ['\n', '', ' ']: 
+            temp = {}
+            if value and value.strip() not in ['\n', '', ' ']:
                 temp.update({'value': value})
             if attr:
-                temp.update({'attributes': {key: value.replace('\"', '') for key, value in attr.items()}})
+                temp.update({'attributes': {key: value.replace('\"', '')
+                            for key, value in attr.items()}})
 
             if tag in storage:
-                if temp: 
-                    storage[tag] = [val for val in storage[tag] if val ] 
+                if temp:
+                    storage[tag] = [val for val in storage[tag] if val]
                     storage[tag].append(temp)
             else:
-                storage[tag] = [temp] 
+                storage[tag] = [temp]
 
         def parse_value(xml_string, i):
             start = i
-            while xml_string[i] != '<':
+            temp_xml = xml_string.replace(' < ', 'lsr')
+            while temp_xml[i] != '<':
                 i += 1
-            value = xml_string[start:i].strip()
+            value = temp_xml[start:i].strip()
             if value == '':
                 return None, i
             else:
@@ -130,14 +136,15 @@ class XML:
 
         i = 0
         storage = {}
-        tags = [] 
+        tags = []
         while i < len(xml_string):
             i = skip_whitespace(xml_string, i)
-            if i >= len(xml_string) : break 
+            if i >= len(xml_string):
+                break
             if xml_string[i] == '<':
-                if xml_string[i+1] == '/':  
+                if xml_string[i+1] == '/':
                     tag, i = parse_tag(xml_string, i + 2)
-                else:  
+                else:
                     tag, i = parse_tag(xml_string, i + 1)
                     tag, attr = sanity_check(tag)
                     value, i = parse_value(xml_string, i)
@@ -145,5 +152,5 @@ class XML:
                 tags += [tag]
             else:
                 break
-        
+
         return parse_tags(tags, storage)
