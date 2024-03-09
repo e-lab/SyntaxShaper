@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from constrain.tools.pydantic import ModelParser
-
+from collections import deque
 
 class XML:
     @staticmethod
@@ -25,18 +25,29 @@ class XML:
             if name:
                 instruct.append(name)
 
-            variables = ModelParser.extract_variables_with_descriptions(model)
-            forma = XML.generate_prompt_from_variables(variables, nested=True)
-            grammar += f"{name}\n```\n{forma}\n```\n"
+            variables, nested_models = ModelParser.extract_variables_with_descriptions(model)
+
+            if nested_models:
+                forma = XML.generate_prompt_from_variables({name: variables[name]})
+                del variables[name]
+            else: 
+                forma = XML.generate_prompt_from_variables(variables)
+
+            grammar += f"{name}:\n```\n{forma}\n```\n"
+
+            if nested_models:
+                grammar += "Use the data types given below to fill in the above model\n```\n"
+                for variable in variables:
+                    grammar += f"{XML.generate_prompt_from_variables({variable: variables[variable]})}\n"
+                grammar += "```"
 
         return grammar, instruct
 
     @staticmethod
-    def generate_prompt_from_variables(variables_info: dict, nested: bool = False) -> str:
+    def generate_prompt_from_variables(variables_info: dict) -> str:
         prompt_lines = []
         for model_name, fields in variables_info.items():
-            if nested:
-                prompt_lines.append(f"<{model_name}>")
+            prompt_lines.append(f"<{model_name}>")
             for var_name, details in fields.items():
                 line = f'<{var_name}>'
                 if 'value' in details:
@@ -48,34 +59,78 @@ class XML:
                     if str(details.get("default")) not in ['PydanticUndefined', 'None']:
                         line += f' # Default: "{details["default"]}"'
                 prompt_lines.append(line)
-            if nested:
-                prompt_lines.append(f"</{model_name}>")
+            prompt_lines.append(f"</{model_name}>\n")
 
         return "\n".join(prompt_lines)
 
     def parse(xml_string):
 
-        def parse_tags(tags, storage):
-            stack = []
-            result = {}
+        def build_structure(tags):
+            result = {}  # The resulting structure
+            stack = []  # Stack to keep track of the hierarchy and context
+            objects = {}  # Temporary storage for ongoing construction of objects
+
             for tag in tags:
-                if stack and stack[-1] == tag:
-                    stack.pop()
-                    if stack:
-                        parent = result
-                        for item in stack:
-                            parent = parent[item][-1]
-                        parent[tag] = storage[tag].pop(0)
-                    else:
-                        result[tag] = storage[tag].pop(0)
-                else:
+                if not stack or stack[-1] != tag:  # Opening tag
+                    if tag not in objects:  # First occurrence of this tag
+                        objects[tag] = []
                     stack.append(tag)
-                    if stack:
-                        parent = result
-                        for item in stack[:-1]:
-                            parent = parent[item][-1]
-                        parent[tag] = [storage[tag][0]]
+                    # Create a new dictionary for this tag instance
+                    new_obj = {}
+                    objects[tag].append(new_obj)
+                    # Nest the new_obj correctly
+                    if len(stack) > 1:  # Not at the root
+                        parent_tag = stack[-2]
+                        # Get the last instance of the parent object
+                        parent_obj = objects[parent_tag][-1]
+                        if tag in parent_obj:  # Already exists, ensure it's a list
+                            if not isinstance(parent_obj[tag], list):
+                                parent_obj[tag] = [parent_obj[tag]]  # Convert existing to list
+                            parent_obj[tag].append(new_obj)
+                        else:
+                            parent_obj[tag] = new_obj  # Add as a single instance for now
+                else:  # Closing tag
+                    stack.pop()  # Finished with this tag level
+
+            result[tag] = objects[tags[0]]
             return result
+
+        def populate_structure(structure, storage):
+            # Initialize a queue with the structure's items
+            queue = deque([(structure, None)])
+
+            while queue:
+                current, parent_tag = queue.popleft()
+
+                # Check if the current item is a dict and process accordingly
+                if isinstance(current, dict):
+                    for tag, value in current.items():
+                        # If value is a dict and not meant to be populated, enqueue it for further traversal
+                        if isinstance(value, dict) and not value:
+                            if tag in storage and storage[tag]:
+                                current[tag] = storage[tag].pop(0)['value']
+                            continue
+                        elif isinstance(value, list):
+                            # If it's a list, enqueue all items with the current tag
+                            for item in value:
+                                queue.append((item, tag))
+                        else:
+                            queue.append((value, tag))
+                # Check if the current item is a list and it's not directly under a 'nested' tag
+                elif isinstance(current, list) and parent_tag not in ['tasks', 'Tasks']:
+                    # Assume lists at this level are homogeneous and represent multiple instances of an item
+                    for item in current:
+                        if isinstance(item, dict):
+                            queue.append((item, parent_tag))
+
+        def parse_tags(tags, storage):
+            # Step 1: Build the structure
+            structure = build_structure(tags)
+
+            # Step 2: Populate the structure with values from storage
+            populate_structure(structure, storage)
+
+            return structure
 
         def parse_tag(xml_string, i):
             start = i
@@ -119,7 +174,7 @@ class XML:
             if value == '':
                 return None, i
             else:
-                return value, i
+                return value.replace(' lsr ', ' < '), i
 
         def sanity_check(tag):
             if ' ' in tag:

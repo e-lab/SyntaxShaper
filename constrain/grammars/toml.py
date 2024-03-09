@@ -23,24 +23,38 @@ class TOML:
             if name:
                 instruct.append(name)
 
-            variables = ModelParser.extract_variables_with_descriptions(model)
-            forma = TOML.generate_prompt_from_variables(variables, nested=True)
+            variables, nested_models = ModelParser.extract_variables_with_descriptions(model)
+
+            if nested_models:
+                forma = TOML.generate_prompt_from_variables({name: variables[name]})
+                del variables[name]
+            else: 
+                forma = TOML.generate_prompt_from_variables(variables)
+
             grammar += f"{name}:\n```\n{forma}\n```\n"
+
+            if nested_models:
+                grammar += "Use the data types given below to fill in the above model\n```\n"
+                for variable in variables:
+                    grammar += f"{TOML.generate_prompt_from_variables({variable: variables[variable]})}\n"
+                grammar += "```"
 
         return grammar, instruct
 
     @staticmethod
-    def generate_prompt_from_variables(variables_info: dict, nested: bool = False) -> str:
+    def generate_prompt_from_variables(variables_info: dict) -> str:
         prompt_lines = []
         for model_name, fields in variables_info.items():
-            if nested:
-                prompt_lines.append(f"[{model_name}]")
+            prompt_lines.append(f"[{model_name}]")
             for var_name, details in fields.items():
                 line = f'{var_name} = '
                 if 'value' in details:
                     line += f'"{details["value"]}"'
                 else:
-                    line += f'# Type: {details["type"]}'
+                    if details.get('type') == 'boolean':
+                        line += f'# Type: "{details["type"]}"' 
+                    else:
+                        line += f'# Type: {details["type"]}'
                     if details.get('description'):
                         line += f' | "{details["description"]}"'
 
@@ -69,19 +83,17 @@ class TOML:
                 i = skip_whitespace(toml_string, i)
             return section, i
 
-        def parse_key(toml_string, i):
-            start = i
-            while toml_string[i] not in '=':
-                i += 1
-            return toml_string[start:i], i
+
 
         def parse_value(toml_string, i):
             if toml_string[i] == '"':
                 return parse_string(toml_string, i + 1)
             elif toml_string[i] == '[':
                 return parse_array(toml_string, i)
+            elif toml_string[i] == '{':
+                return parse_dict(toml_string, i)
             else:
-                return parse_number(toml_string, i)
+                return parse_other(toml_string, i)
 
         def parse_string(toml_string, i):
             start = i
@@ -90,9 +102,9 @@ class TOML:
             # i += 1
             return toml_string[start:i], i + 1
 
-        def parse_number(toml_string, i):
+        def parse_other(toml_string, i):
             start = i
-            while toml_string[i] in '0123456789.-':
+            while toml_string[i] in '0123456789.-' or toml_string[i] in "true" or toml_string[i] in "false":
                 i += 1
 
             val = toml_string[start:i]
@@ -107,19 +119,39 @@ class TOML:
             array = []
             i = skip_whitespace(toml_string, i + 1)
             while toml_string[i].strip().replace('\n', '') != ']':
-                # print('in array', toml_string[:i])
-                # print('after array', toml_string[i].strip().replace('\n', ''))
                 value, i = parse_value(toml_string, i)
-                # print('value', value)
                 array.append(value)
                 j = skip_whitespace(toml_string, i + 1)
                 if toml_string[i] == ']':
                     break
                 i = j
-                # print('right after array', toml_string[:i])
 
             array = [x for x in array if x]
             return array, i + 1
+
+
+        def parse_key(toml_string, i):
+            start = i
+            while toml_string[i] not in '=':
+                i += 1
+            return toml_string[start:i], i
+
+        def parse_dict(toml_string, i):
+            dictionary = {}
+            i = skip_whitespace(toml_string, i + 1)  # Move past the '{'
+            while toml_string[i] != '}':
+                key, i = parse_key(toml_string, i)
+                i = skip_whitespace(toml_string, i)
+                if toml_string[i] == '=' or toml_string[i] == ':': 
+                    i += 1  # Skip the '='
+                    i = skip_whitespace(toml_string, i)
+                    value, i = parse_value(toml_string, i)
+                    dictionary[key] = value
+                    i = skip_whitespace(toml_string, i)
+                    if toml_string[i] == ',':
+                        i += 1  # Skip the comma
+                        i = skip_whitespace(toml_string, i)
+            return dictionary, i + 1
 
         def skip_whitespace(toml_string, i):
             while i < len(toml_string) and toml_string[i] in [
@@ -140,6 +172,7 @@ class TOML:
                     storage[key] = [section[key]]
             else:
                 break
+
         return storage
 
     @staticmethod
