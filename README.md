@@ -6,7 +6,7 @@
 
 This repository contains code to abstract the LLM output constraining process. It helps you define your grammar rules using Pydantic and Typing in a pythonic way, and inherently embeds metadata from these dataclasses into the prompt. Parsing is enabled in JSON, TOML and XML formats, with custom parsers that avoid the issues faced by `json.loads` (..etc) while parsing direct outputs. It can also create GNBF grammr from the same, which is used by the `llama.cpp` package for sampling logits smartly. 
 
-The goal of this package was to overcome the issues faced when using langchain's output parsers with local language models. While GPT-4 produces consistent results in returning the correct formats, Llama-7B would cause parsing errors in our testing chains.
+The goal of this package was to overcome the issues faced when using langchain's output parsers with local language models. While GPT-4 produces consistent results in returning the correct formats, Llama-7B would cause parsing errors in my testing chains with more complex prompts. 
 
 ## 📚 Quick Install
 
@@ -145,7 +145,17 @@ with Constrain(llama_prompt) as manager:
     response = manager.parse(llm_response)
 ```
 
-## License
+## Citation
 
-Constrain is released under the MIT License. Please see the LICENSE file for more details.
+We appreciate it if you would please cite this repo if you found the library useful for your work:
 
+```
+@misc{Ravikiran2024,
+  author = {Ravikiran, Akshath Raghav},
+  title = {ParseChain: Powering Agent Chains by Constraining LLM Outputs},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/e-lab/ParseChain/tree/main}}
+}
+```
