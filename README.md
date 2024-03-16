@@ -150,12 +150,13 @@ with Constrain(llama_prompt) as manager:
 We appreciate it if you would please cite this repo if you found the library useful for your work:
 
 ```
-@misc{Ravikiran2024,
-  author = {Ravikiran, Akshath Raghav},
+@software{ParseChain,
+  author = {Ravikiran, Akshath Raghav and Culurciello, Eugenio},
   title = {ParseChain: Powering Agent Chains by Constraining LLM Outputs},
   year = {2024},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/e-lab/ParseChain/tree/main}}
+  howpublished = {\url{https://github.com/e-lab/ParseChain}}, 
+  version = {0.0.1}
 }
 ```
