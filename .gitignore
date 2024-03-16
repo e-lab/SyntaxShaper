@@ -9,3 +9,5 @@ venv/
 ./dist/
 
 /gnbf.ipynb
+
+*/*.pyc

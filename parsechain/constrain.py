@@ -1,12 +1,15 @@
-from constrain.prompt.builder import Prompt, PromptBuilder
-from constrain.grammars.json import JSON
-from constrain.grammars.toml import TOML
-from constrain.grammars.xml import XML
-from constrain.tools.response import Response
+from parsechain.prompt.builder import Prompt, PromptBuilder
+from parsechain.grammars.json import JSON
+from parsechain.grammars.toml import TOML
+from parsechain.grammars.xml import XML
+from parsechain.tools.response import Response
 
 class Constrain:
     def __init__(self, prompt):
-        self.config = {}
+        self.config = {
+            'format': 'json', 
+            'return_sequence': 'single_response'
+        }
         # Keeps track of last run for inflation_rate()
         self.initial_prompt = None
         self.inflation = None

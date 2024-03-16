@@ -3,6 +3,6 @@ message: "We appreciate it if you would please cite this repo if you found the l
 authors:
 - family-names: "Ravikiran"
   given-names: "Akshath Raghav"
-title: "constrain"
+title: "parsechain"
 version: 0.0.1
-url: "https://github.com/e-lab/SyntaxShaper/tree/main"
+url: "https://github.com/e-lab/ParseChain/tree/main"

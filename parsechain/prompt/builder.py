@@ -1,6 +1,6 @@
-from constrain.grammars.json import JSON
-from constrain.grammars.toml import TOML
-from constrain.grammars.xml import XML
+from parsechain.grammars.json import JSON
+from parsechain.grammars.toml import TOML
+from parsechain.grammars.xml import XML
 
 class Prompt:
     def __init__(self, built_prompt, placeholders=[]):

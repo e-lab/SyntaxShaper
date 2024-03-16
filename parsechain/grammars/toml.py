@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from constrain.tools.pydantic import ModelParser
+from parsechain.tools.pydantic import ModelParser
 
 
 class TOML:

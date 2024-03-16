@@ -13,14 +13,14 @@ def parse_requirements(filename: str) -> typing.List[str]:
 requirements = [ir for ir in parse_requirements("requirements.txt")]
 
 setup(
-    name='constrain',
+    name='parsechain',
     version='0.1.0',
     author='AkshathRaghav',
     author_email='araviki@purdue.edu',
     description='Ensuring parsability of LLM responses in agent chains',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/AkshathRaghav/constrain',
+    url='https://github.com/AkshathRaghav/parsechain',
     install_requires=requirements,
     packages=find_packages(),
     packages=find_packages(),

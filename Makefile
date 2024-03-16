@@ -3,7 +3,7 @@ $(VERBOSE).SILENT:
 
 .PHONY: install
 install: ## Installs all required dependencies and dependencies for local development
-	pip3 install -r requirements.txt
+	python setup.py install
 
 .PHONY: lint
 lint: ## lints the codebase
