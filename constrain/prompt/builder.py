@@ -2,16 +2,13 @@ from constrain.grammars.json import JSON
 from constrain.grammars.toml import TOML
 from constrain.grammars.xml import XML
 
-
 class Prompt:
     def __init__(self, built_prompt, placeholders=[]):
         self.placeholders = placeholders
         self.prompt = built_prompt
 
     def fill(self, **kwargs):
-        print('entering')
         filled_prompt = self.prompt
-        print('kwags', kwargs)
 
         if kwargs:
             filled_prompt = self.prompt
@@ -48,6 +45,9 @@ class PromptBuilder:
         self.sections.append({'type': type_, 'text': text, 'placeholder': placeholder,
                              'define_grammar': define_grammar, 'remind_grammar': remind_grammar, 'examples': add_few_shot_examples})
 
+    def get_text(self): 
+        return " ".join([section['text'] for section in self.sections])
+
     def build(self, config):
         prompt = ""
         user_prompt = ""  # Track's user's prompt without any grammar additions
@@ -58,9 +58,9 @@ class PromptBuilder:
             user_prompt += section['text'] + "\n"
 
             if section['define_grammar']:
-                if 'tasks' in config:
+                if 'grammars' in config:
                     grammar_instruction, grammar, reminders = self.make_format(
-                        config.get('format', None), config['tasks'], config['return_sequence'])
+                        config.get('format'), config['grammars'], config['return_sequence'])
 
             if section['type'] == 'fixed':
                 section_text = section['text']
@@ -74,17 +74,17 @@ class PromptBuilder:
                         f"{{{section['placeholder']}}}", f"{{{section['placeholder']}}}\n" + grammar_instruction + '\n\n' + grammar + reminders[-1])
                 section_text = section['text']
 
-            if 'examples' in section and section['examples']:
+            if section['examples'] and config['examples']:
                 _, grammar, _ = self.make_format(config.get(
-                    'format', None), config['examples'], None)
+                    'format'), config['examples'], None)
                 section_text += "\nHere are some examples:\n"
                 section_text += f"{grammar}\n"
 
             prompt += section_text + "\n"
 
-        return Prompt(prompt.strip(), placeholders=self.placeholders), Prompt(user_prompt.strip())
+        return Prompt(prompt.strip(), placeholders=self.placeholders)
 
-    def make_format(self, serialization_type, tasks, return_sequence):
+    def make_format(self, serialization_type, grammars, return_sequence):
         if serialization_type == 'json':
             formatter = JSON
         elif serialization_type == 'toml':
@@ -94,20 +94,20 @@ class PromptBuilder:
         else:
             formatter = JSON
 
-        grammar, instruct = formatter.make_format(tasks, return_sequence)
+        grammar, model_names = formatter.make_format(grammars, return_sequence)
 
-        if instruct:
+        if model_names:
             response_type = 'ONLY' if return_sequence == 'single_response' else 'ALL OF'                
-            if len(instruct) > 1:
+            if len(model_names) > 1:
                 instruction = f"Here are the {serialization_type.upper()} output formats you are expected to return your responses in."
                 reminders = "\nRETURN {} {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'".format(
                     response_type,
-                    ', '.join(instruct))
+                    ', '.join(model_names))
             else: 
                 instruction = f"Here is the {serialization_type.upper()} output format you are expected to return your response in."
                 reminders = "\nRETURN {} ONE OF {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'.".format(
                     response_type,
-                    ', '.join(instruct))
+                    ', '.join(model_names))
         else:
             instruction = None
             reminders = None

@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "We appreciate it if you would please cite this repo if you found the library useful for your work."
+authors:
+- family-names: "Ravikiran"
+  given-names: "Akshath Raghav"
+title: "constrain"
+version: 0.0.1
+url: "https://github.com/e-lab/SyntaxShaper/tree/main"

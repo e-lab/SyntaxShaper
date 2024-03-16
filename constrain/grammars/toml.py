@@ -5,15 +5,17 @@ from constrain.tools.pydantic import ModelParser
 
 class TOML:
     @staticmethod
-    def make_format(tasks: List[dict], return_sequence: str) -> str:
-        grammar, instruct = "", []
-        for task in tasks:
+    def make_format(grammars: List[dict], return_sequence: str) -> str:
+        grammar, model_names = "", []
+        for task in grammars:
             model = task.get('model')
             if isinstance(model, list):
                 if not task.get('query'): 
                     name = "_".join([m.__name__ for m in model])
             else: 
-                if hasattr(model, '__name__'):
+                if task.get('description'):
+                    name = task.get('description')
+                elif hasattr(model, '__name__'):
                     name = model.__name__
                 model = [model]
             
@@ -21,30 +23,30 @@ class TOML:
                 name = "For query: " + repr(task.get('query'))
 
             if name:
-                instruct.append(name)
+                model_names.append(name)
 
-            variables, nested_models = ModelParser.extract_variables_with_descriptions(model)
+            fields, is_nested_model = ModelParser.extract_fields_with_descriptions(model)
 
-            if nested_models:
-                forma = TOML.generate_prompt_from_variables({name: variables[name]})
-                del variables[name]
+            if is_nested_model:
+                forma = TOML.generate_prompt_from_fields({name: fields[name]})
+                del fields[name]
             else: 
-                forma = TOML.generate_prompt_from_variables(variables)
+                forma = TOML.generate_prompt_from_fields(fields)
 
             grammar += f"{name}:\n```\n{forma}\n```\n"
 
-            if nested_models:
+            if is_nested_model:
                 grammar += "Use the data types given below to fill in the above model\n```\n"
-                for variable in variables:
-                    grammar += f"{TOML.generate_prompt_from_variables({variable: variables[variable]})}\n"
+                for nested_model in fields:
+                    grammar += f"{TOML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
                 grammar += "```"
 
-        return grammar, instruct
+        return grammar, model_names
 
     @staticmethod
-    def generate_prompt_from_variables(variables_info: dict) -> str:
+    def generate_prompt_from_fields(fields_info: dict) -> str:
         prompt_lines = []
-        for model_name, fields in variables_info.items():
+        for model_name, fields in fields_info.items():
             prompt_lines.append(f"[{model_name}]")
             for var_name, details in fields.items():
                 line = f'{var_name} = '
@@ -83,8 +85,6 @@ class TOML:
                 i = skip_whitespace(toml_string, i)
             return section, i
 
-
-
         def parse_value(toml_string, i):
             if toml_string[i] == '"':
                 return parse_string(toml_string, i + 1)
@@ -99,12 +99,15 @@ class TOML:
             start = i
             while toml_string[i] != '"':
                 i += 1
-            # i += 1
             return toml_string[start:i], i + 1
 
         def parse_other(toml_string, i):
             start = i
-            while toml_string[i] in '0123456789.-' or toml_string[i] in "true" or toml_string[i] in "false":
+            if toml_string[start:start+4].lower() == 'true': return True 
+            elif toml_string[start:start+5].lower() == 'false': return False
+
+
+            while toml_string[i] in '0123456789.-':
                 i += 1
 
             val = toml_string[start:i]
@@ -113,7 +116,7 @@ class TOML:
                     return float(val), i
                 return int(val), i
             except ValueError:
-                return '', i
+                return val, i
 
         def parse_array(toml_string, i):
             array = []

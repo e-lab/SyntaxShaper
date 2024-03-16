@@ -5,58 +5,57 @@ from constrain.tools.pydantic import ModelParser
 
 class JSON:
     @staticmethod
-    def make_format(tasks: List[dict], return_sequence: str) -> str:
-        grammar, instruct = "", []
-        for task in tasks:
+    def make_format(grammars: List[dict], return_sequence: str) -> str:
+        grammar, model_names = "", []
+        for task in grammars:
             model = task.get('model')
 
             if isinstance(model, list):
                 if not task.get('query'): 
                     name = "_".join([m.__name__ for m in model])
             else: 
-                if hasattr(model, '__name__'):
+                if task.get('description'):
+                    name = task.get('description')
+                elif hasattr(model, '__name__'):
                     name = model.__name__
                 model = [model]
             
             if task.get('query'):
                 name = "For query: " + repr(task.get('query'))
-
+            
             if name:
-                instruct.append(name)
+                model_names.append(name)
 
-            variables, nested_models = ModelParser.extract_variables_with_descriptions(model)
+            fields, is_nested_model = ModelParser.extract_fields_with_descriptions(model)
 
-            if nested_models:
-                forma = JSON.generate_prompt_from_variables({name: variables[name]})
-                del variables[name]
+            if is_nested_model:
+                format_ = JSON.generate_prompt_from_fields({name: fields[name]})
+                del fields[name]
             else: 
-                if len(variables) > 1:
-                        forma = JSON.generate_prompt_from_variables(
-                            variables, nested=True)
+                if len(fields) > 1:
+                        format_ = JSON.generate_prompt_from_fields(
+                            fields, nested=True)
                 else:
-                    forma = JSON.generate_prompt_from_variables(variables)
+                    format_ = JSON.generate_prompt_from_fields(fields)
 
-            grammar += f"{name}:\n```\n{forma}\n```\n"
+            grammar += f"{name}:\n```\n{format_}\n```\n"
 
-            if nested_models:
+            if is_nested_model:
                 grammar += "Use the data types given below to fill in the above model\n```\n"
-                # print(variables)
-                for variable in variables:
-                    # print('variable is', variable)
-                    grammar += f"{JSON.generate_prompt_from_variables({variable: variables[variable]}, ignore=True)}\n"
+                for nested_model in fields:
+                    grammar += f"{JSON.generate_prompt_from_fields({nested_model: fields[nested_model]}, ignore=True)}\n"
                 grammar += "```"
 
-        return grammar, instruct
+        return grammar, model_names
 
     @staticmethod
-    def generate_prompt_from_variables(variables_info: dict, nested: bool = False, ignore=False) -> str:
+    def generate_prompt_from_fields(fields_info: dict, nested: bool = False, ignore=False) -> str:
         if not ignore: prompt_lines = ["{"] 
         else : prompt_lines = []
-        for model_name, fields in variables_info.items():
+        for model_name, fields in fields_info.items():
             model_prompt = JSON._generate_single_model_prompt(
                 fields, model_name, nested=True)
             prompt_lines.append(f'{model_prompt},')
-        # Ensure proper JSON formatting
         prompt_lines[-1] = prompt_lines[-1].rstrip(',')
         if not ignore: prompt_lines.append("}")
         return "\n".join(prompt_lines)
@@ -65,7 +64,6 @@ class JSON:
     def _generate_single_model_prompt(fields: dict, model_name: str, nested: bool = False) -> str:
         prompt_lines = [f'"{model_name}": ' + "{" if nested else "{"]
         for var_name, details in fields.items():
-            # print(var_name, details)
             line = f'"{var_name}": '
             if 'value' in details:
                 line += f'{details["value"]}'
@@ -96,9 +94,9 @@ class JSON:
                 return parse_number(json_string, i)
             elif json_string[i] == '"':
                 return parse_string(json_string, i + 1)
-            elif json_string[i:i+4] == 'true':
+            elif json_string[i:i+4].lower() == 'true':
                 return True, i + 4
-            elif json_string[i:i+5] == 'false':
+            elif json_string[i:i+5].lower() == 'false':
                 return False, i + 5
             elif json_string[i:i+4] == 'null':
                 return None, i + 4
@@ -106,15 +104,12 @@ class JSON:
                 raise ValueError(f'Invalid character at {i}: {json_string[i]}')
 
         def parse_string(json_string, i):
-            # print('in string')
-            # print(json_string, i)
             start = i
             if json_string[i] == '"':
                 start = i + 1
                 i += 1
             while json_string[i] != '"':
                 i += 1
-            # print(i)
             return json_string[start:i], i + 1
 
         def parse_number(json_string, i):
@@ -134,8 +129,6 @@ class JSON:
             return array, i + 1
 
         def parse_object(json_string, i):
-            # print('in object')
-            # print(json_string)
             obj = {}
             while json_string[i] != '}':
                 key, i = parse_string(json_string, i)
