@@ -45,7 +45,7 @@ llama_prompt.add_section(
     placeholder="user_message",
 )
 ```
-You can find an in-depth explanation [here]()
+You can find an in-depth explanation [here](https://github.com/e-lab/SyntaxShaper/blob/main/demo.ipynb)
 
 4. [Optional] If you decide to make your own template, define your system_context and user_message `placeholders`. 
 ```python
