@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "GrammarFlow"
+version = "0.0.1"
+authors = [
+  { name="AkshathRaghav", email="araviki@purdue.edu" },
+]
+description = "Ensuring parsability of LLM responses in agent chains"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/e-lab/SyntaxShaper"
+Issues = "https://github.com/e-lab/SyntaxShaper/issues"
+
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]

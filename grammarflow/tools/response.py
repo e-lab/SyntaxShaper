@@ -1,4 +1,5 @@
-import json 
+import json
+
 
 class Response:
     def __init__(self, data=None):
@@ -21,7 +22,9 @@ class Response:
             self._data[name] = value
 
     def __getitem__(self, key):
-        if (isinstance(self._data, list) and isinstance(key, int)) or (isinstance(self._data, dict) and key in self._data):
+        if (isinstance(self._data, list) and isinstance(key, int)) or (
+            isinstance(self._data, dict) and key in self._data
+        ):
             return self._data[key]
         return None
 
@@ -34,18 +37,18 @@ class Response:
     def __repr__(self):
         return repr(self._data)
 
-    def schema(self, path='', depth=0):
+    def schema(self, path="", depth=0):
         schema_dict = {}
         if isinstance(self._data, dict):
             for k, v in self._data.items():
-                print('    ' * depth + str(k))
+                print("    " * depth + str(k))
                 if isinstance(v, dict) or isinstance(v, list):
                     schema_dict[k] = Response(v).schema(path, depth + 1)
                 else:
                     schema_dict[k] = type(v).__name__
         elif isinstance(self._data, list):
-            if self._data: 
-                print('    ' * depth + '[]') 
+            if self._data:
+                print("    " * depth + "[]")
                 item_schema = Response(self._data[0]).schema(path, depth + 1)
                 schema_dict = item_schema
         else:
@@ -55,4 +58,3 @@ class Response:
 
     def __str__(self):
         return json.dumps(self._data, indent=4)
-
