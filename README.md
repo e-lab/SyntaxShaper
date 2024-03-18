@@ -93,8 +93,22 @@ observation = PerformSomeAction(
 7. Continue to the next iteration in your agent chain! 
 
 ### Examples (@ samples/)
-1. For a general overview of what GrammarFlow can do, look at [demo.ipynb](). 
-2. For our modification to [HotPotQA](), look at [hotpotqa_modified.ipynb]().
+1. For a general overview of what GrammarFlow can do, look at [demo.ipynb](https://github.com/e-lab/SyntaxShaper/blob/main/samples/demo.ipynb). 
+2. For our modification to [ReAct's](https://github.com/ysymyth/ReAct) evaluation code on [HotPotQA](https://hotpotqa.github.io/), look at [hotpotqa_modified.ipynb](https://github.com/e-lab/SyntaxShaper/blob/main/samples/hotpotqa/hotpotqa_modified.ipynb).
+    > HotpotQA is a question answering dataset featuring natural, multi-hop questions, with strong supervision for supporting facts to enable more explainable question answering systems.
+
+    [ReAct](https://github.com/ysymyth/ReAct) adds a bunch of useful helper functions to their evaluation code for prompting against this dataset. This sample directory cleans up their code and adds GrammarFlow to it. 
+
+    All we need to do is: 
+    1. Create a Step model to constrain our thinking state
+    2. Create a Prompt for our ReAct flow. Our `make_prompt()` function takes care of it. 
+    3. Within the original `webthink()` function, we make changes along the lines of: 
+    - Tracking and logging all steps between iterations
+    - Use `Constrain()` from GrammarFlow to make the extraction of 'Thought', 'Action' and 'Action_Input' pythonic and error-prone. 
+
+    Note: Remember that prompts are stateful, and thus need to be discarded after every `Constrain()` block. That's why we use `make_prompt()`
+
+    Our goal was to show that we can easily infuse existing prompting code with GrammarFlow! 
 
 ### GNBF Grammar 
 
