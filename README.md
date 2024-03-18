@@ -45,7 +45,7 @@ llama_prompt.add_section(
     placeholder="user_message",
 )
 ```
-You can find an in-depth explanation on making prompts [here](https://github.com/e-lab/SyntaxShaper/blob/main/demo.ipynb)!
+You can find an in-depth explanation on making prompts [here](https://github.com/e-lab/SyntaxShaper/blob/main/samples/demo.ipynb)!
 
 4. [Optional] If you decide to make your own template, define your system_context and user_message `placeholders`. 
 ```python
@@ -91,6 +91,10 @@ observation = PerformSomeAction(
 ```
 
 7. Continue to the next iteration in your agent chain! 
+
+### Examples (@ samples/)
+1. For a general overview of what GrammarFlow can do, look at [demo.ipynb](). 
+2. For our modification to [HotPotQA](), look at [hotpotqa_modified.ipynb]().
 
 ### GNBF Grammar 
 

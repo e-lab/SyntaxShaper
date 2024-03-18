@@ -14,7 +14,8 @@ class Prompt:
         if kwargs:
             filled_prompt = self.prompt
             for key, value in kwargs.items():
-                filled_prompt = filled_prompt.replace(f"{{{key}}}", value)
+                if key in self.placeholders:
+                    filled_prompt = filled_prompt.replace(f"{{{key}}}", value)
 
         return filled_prompt
 
@@ -27,11 +28,11 @@ class PromptBuilder:
         self.placeholders = []
 
     def add_section(
-        self, text="", placeholder="", define_grammar=False, remind_grammar=False, add_few_shot_examples=[]
+        self, text="", placeholders=[], define_grammar=False, remind_grammar=False, add_few_shot_examples=[], enable_on=None
     ):
         type_ = "fixed"
-        if placeholder:
-            self.placeholders.append(placeholder)
+        if placeholders and not enable_on:
+            self.placeholders.extend(placeholders)
             type_ = "editable"
 
         if self.grammar_set and define_grammar:
@@ -48,10 +49,11 @@ class PromptBuilder:
             {
                 "type": type_,
                 "text": text,
-                "placeholder": placeholder,
+                "placeholders": placeholders,
                 "define_grammar": define_grammar,
                 "remind_grammar": remind_grammar,
                 "examples": add_few_shot_examples,
+                "enable_on": enable_on  
             }
         )
 
@@ -60,9 +62,18 @@ class PromptBuilder:
 
     def build(self, config):
         prompt = ""
-        user_prompt = ""  # Track's user's prompt without any grammar additions
+        user_prompt = ""  
 
         for section in self.sections:
+            # section["enable_on"] is meant to be a function 
+            if section["enable_on"] and not config['enable_on']:
+                raise ValueError("You need to provide the inputs to the enable_on functions you've defined in PromptBuilder.")
+            elif section["enable_on"] and config['enable_on']:
+                if not section["enable_on"](**config['enable_on']):
+                    continue
+                else: 
+                    self.placeholders.extend(section["placeholders"])
+
             grammar_instruction = ""
 
             user_prompt += section["text"] + "\n"
@@ -79,11 +90,11 @@ class PromptBuilder:
                     section_text += "\n" + grammar_instruction + "\n\n" + grammar + reminders[-1]
 
             elif section["type"] == "editable":
-                if section["placeholder"] and grammar_instruction:
-                    section["text"] = section["text"].replace(
-                        f"{{{section['placeholder']}}}",
-                        f"{{{section['placeholder']}}}\n" + grammar_instruction + "\n\n" + grammar + reminders[-1],
-                    )
+                if section["placeholders"] and grammar_instruction:
+                    for placeholder in section["placeholders"]:
+                        section["text"] = section["text"].replace(
+                            f"{{{placeholder}}}", f"{{{placeholder}}}\n" + grammar_instruction + "\n\n" + grammar + reminders[-1]
+                        )
                 section_text = section["text"]
 
             if section["examples"] and config["examples"]:
@@ -110,13 +121,13 @@ class PromptBuilder:
         if model_names:
             response_type = "ONLY" if return_sequence == "single_response" else "ALL OF"
             if len(model_names) > 1:
-                instruction = f"Here are the {serialization_type.upper()} output formats you are expected to return your responses in."
-                reminders = "\nRETURN {} {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'".format(
+                instruction = f"Here are the {serialization_type.upper()} output formats you are expected to return your responses in"
+                reminders = "\nRETURN {} {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'\n".format(
                     response_type, ", ".join(model_names)
                 )
             else:
                 instruction = f"Here is the {serialization_type.upper()} output format you are expected to return your response in."
-                reminders = "\nRETURN {} ONE OF {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'.".format(
+                reminders = "\nRETURN {} ONE OF {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'\n.".format(
                     response_type, ", ".join(model_names)
                 )
         else:

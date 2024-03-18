@@ -1,24 +1,18 @@
 Metadata-Version: 2.1
 Name: GrammarFlow
-Version: 0.0.1
+Version: 0.0.5
 Summary: Ensuring parsability of LLM responses in agent chains
 Home-page: https://github.com/e-lab/SyntaxShaper
 Author: AkshathRaghav
-Author-email: AkshathRaghav <araviki@purdue.edu>
-Project-URL: Homepage, https://github.com/e-lab/SyntaxShaper
-Project-URL: Issues, https://github.com/e-lab/SyntaxShaper/issues
+Author-email: araviki@purdue.edu
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
-Provides-Extra: dev
-Requires-Dist: black; extra == "dev"
-Requires-Dist: bumpver; extra == "dev"
-Requires-Dist: isort; extra == "dev"
-Requires-Dist: pip-tools; extra == "dev"
-Requires-Dist: pytest; extra == "dev"
 
 # 🪢 GrammarFlow
 
@@ -67,7 +61,7 @@ llama_prompt.add_section(
     placeholder="user_message",
 )
 ```
-You can find an in-depth explanation on making prompts [here](https://github.com/e-lab/SyntaxShaper/blob/main/demo.ipynb)!
+You can find an in-depth explanation on making prompts [here](https://github.com/e-lab/SyntaxShaper/blob/main/samples/demo.ipynb)!
 
 4. [Optional] If you decide to make your own template, define your system_context and user_message `placeholders`. 
 ```python

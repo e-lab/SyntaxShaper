@@ -8,7 +8,7 @@ from grammarflow.tools.pydantic import ModelParser
 class TOML:
     @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
-        grammar, model_names = "", []
+        grammar, model_names, model_descrip, name = "", [], None, None 
         for task in grammars:
             model = task.get("model")
             if isinstance(model, list):
@@ -16,8 +16,8 @@ class TOML:
                     name = "_".join([m.__name__ for m in model])
             else:
                 if task.get("description"):
-                    name = task.get("description")
-                elif hasattr(model, "__name__"):
+                    model_descrip = task.get("description")
+                if hasattr(model, "__name__"):
                     name = model.__name__
                 model = [model]
 
@@ -25,17 +25,22 @@ class TOML:
                 name = "For query: " + repr(task.get("query"))
 
             if name:
-                model_names.append(name)
+                model_names.append(f'[{name}]')
 
             fields, is_nested_model = ModelParser.extract_fields_with_descriptions(model)
 
             if is_nested_model:
-                forma = TOML.generate_prompt_from_fields({name: fields[name]})
+                format_ = TOML.generate_prompt_from_fields({name: fields[name]})
                 del fields[name]
             else:
-                forma = TOML.generate_prompt_from_fields(fields)
+                format_ = TOML.generate_prompt_from_fields(fields)
 
-            grammar += f"{name}:\n```\n{forma}\n```\n"
+            if model_descrip:
+                grammar += f"{model_descrip}:\n"
+            else: 
+                grammar += f"{name}:\n"
+
+            grammar += f"```\n{format_}\n```\n"
 
             if is_nested_model:
                 grammar += "Use the data types given below to fill in the above model\n```\n"

@@ -9,7 +9,7 @@ from grammarflow.tools.pydantic import ModelParser
 class XML:
     @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
-        grammar, model_names = "", []
+        grammar, model_names, model_descrip, name = "", [], None, None 
         for task in grammars:
             model = task.get("model")
 
@@ -18,8 +18,8 @@ class XML:
                     name = "_".join([m.__name__ for m in model])
             else:
                 if task.get("description"):
-                    name = task.get("description")
-                elif hasattr(model, "__name__"):
+                    model_descrip = task.get("description")
+                if hasattr(model, "__name__"):
                     name = model.__name__
                 model = [model]
 
@@ -27,7 +27,7 @@ class XML:
                 name = "For query: " + repr(task.get("query"))
 
             if name:
-                model_names.append(name)
+                model_names.append(f'<{name}>')
 
             fields, is_nested_model = ModelParser.extract_fields_with_descriptions(model)
 
@@ -37,7 +37,12 @@ class XML:
             else:
                 format_ = XML.generate_prompt_from_fields(fields)
 
-            grammar += f"{name}:\n```\n{format_}\n```\n"
+            if model_descrip:
+                grammar += f"{model_descrip}:\n"
+            else: 
+                grammar += f"{name}:\n"
+
+            grammar += f"```\n{format_}\n```\n"
 
             if is_nested_model:
                 grammar += "Use the data types given below to fill in the above model\n```\n"

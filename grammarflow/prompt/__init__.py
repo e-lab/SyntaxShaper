@@ -1,1 +1,1 @@
-from grammarflow.prompt.builder import Prompt, PromptBuilder
+from .builder import Prompt, PromptBuilder

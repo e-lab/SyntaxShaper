@@ -12,7 +12,7 @@ def parse_requirements(filename: str) -> typing.List[str]:
         pydantic==1.8.2 
         tiktoken==0.6.0
         llama-cpp-python==0.2.50   
-        openai==1.13.0
+        openai
         isort 
         black 
     """
@@ -22,15 +22,14 @@ def parse_requirements(filename: str) -> typing.List[str]:
 requirements = [ir for ir in parse_requirements("./requirements.txt")]
 
 setup(
-    name="grammarflow",
-    version="0.1.0",
+    name="GrammarFlow",
+    version="0.0.5",
     author="AkshathRaghav",
     author_email="araviki@purdue.edu",
     description="Ensuring parsability of LLM responses in agent chains",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/e-lab/SyntaxShaper",
-    install_requires=requirements,
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",

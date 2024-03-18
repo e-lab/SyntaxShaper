@@ -1,13 +1,12 @@
-from grammarflow.grammars.json import JSON
-from grammarflow.grammars.toml import TOML
-from grammarflow.grammars.xml import XML
-from grammarflow.prompt.builder import Prompt, PromptBuilder
-from grammarflow.tools.response import Response
-
+from .grammars.json import JSON
+from .grammars.toml import TOML
+from .grammars.xml import XML
+from .prompt.builder import Prompt, PromptBuilder
+from .tools.response import Response
 
 class Constrain:
     def __init__(self, prompt):
-        self.config = {"format": "json", "return_sequence": "single_response"}
+        self.config = {} 
         # Keeps track of last run for inflation_rate()
         self.initial_prompt = None
         self.inflation = None
@@ -23,11 +22,11 @@ class Constrain:
         else:
             raise ValueError("Prompt must be a string, a PromptBuilder or a Prompt object.")
 
-    def set_config(self, format, return_sequence):
+    def set_config(self, format='json', return_sequence='single_response'):
         self.config["format"] = format
         self.config["return_sequence"] = return_sequence
 
-    def format_prompt(self, grammars, placeholders=None, examples=None):
+    def format_prompt(self, grammars, placeholders=None, examples=None, enable_on=None):
         if not self.prompt:
             raise ValueError("Prompt is not set!")
         if not grammars:
@@ -35,6 +34,7 @@ class Constrain:
 
         self.config["grammars"] = grammars
         self.config["examples"] = examples
+        self.config["enable_on"] = enable_on
 
         if not placeholders:
             placeholders = {}
@@ -48,7 +48,8 @@ class Constrain:
         elif isinstance(self.prompt, PromptBuilder):
             self.initial_prompt = self.prompt.get_text()
             if placeholders:
-                self.initial_prompt += " ".join(list(placeholders.values()))
+                
+                self.initial_prompt += " ".join(list([x for x in placeholders.values() if x]))
 
             self.prompt = self.prompt.build(self.config)
 
@@ -66,9 +67,12 @@ class Constrain:
             raise ValueError("Serialization type is not set!")
 
         if isinstance(return_value, str):
-            return_value = (
-                return_value.replace("```json", "```").replace("```xml", "```").replace("```toml", "```")
-            )  # Sometimes, name is added next to the terminals
+            if '```' in return_value:
+                return_value = (
+                    return_value.replace("```json", "```").replace("```xml", "```").replace("```toml", "```")
+                )  # Sometimes, name is added next to the terminals
+            else: 
+                return_value = f"```{return_value}```"
             returned_objects = [
                 split_string.replace("\n", "")
                 for split_string in return_value.split("```")[1::2]

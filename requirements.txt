@@ -1,6 +1,0 @@
-pydantic==1.8.2 
-tiktoken==0.6.0
-llama-cpp-python==0.2.50   
-openai==1.13.0
-isort 
-black 
