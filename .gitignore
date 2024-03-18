@@ -8,6 +8,13 @@ venv/
 ./*.egg-info
 ./dist/
 
-/gnbf.ipynb
 
 */*.pyc
+
+.env
+
+dist/
+build/
+GrammarFlow.egg-info/
+
+*/trajs/
