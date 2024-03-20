@@ -122,12 +122,12 @@ class PromptBuilder:
             response_type = "ONLY" if return_sequence == "single_response" else "ALL OF"
             if len(model_names) > 1:
                 instruction = f"Here are the {serialization_type.upper()} output formats you are expected to return your responses in"
-                reminders = "\nRETURN {} {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'\n".format(
+                reminders = "\nRETURN {} {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'.\n".format(
                     response_type, ", ".join(model_names)
                 )
             else:
                 instruction = f"Here is the {serialization_type.upper()} output format you are expected to return your response in."
-                reminders = "\nRETURN {} ONE OF {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'\n.".format(
+                reminders = "\nRETURN {} ONE OF {}. DO NOT FORGET TO COVER YOUR OUTPUTS WITH '```'.\n".format(
                     response_type, ", ".join(model_names)
                 )
         else:
