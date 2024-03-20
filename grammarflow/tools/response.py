@@ -4,6 +4,9 @@ import json
 class Response:
     def __init__(self, data=None):
         if isinstance(data, (dict, list)):
+            if isinstance(data, list):
+                if len(data) == 1:
+                    data = data[0]
             self._data = data
         else:
             self._data = {}
@@ -32,7 +35,7 @@ class Response:
         if isinstance(self._data, dict) or isinstance(self._data, list):
             self._data[key] = value
         else:
-            raise TypeError("Assignment not supported for uninitialized Response objects")
+            raise TypeError("Assignment not supported for uninitialized Response objects.")
 
     def __repr__(self):
         return repr(self._data)

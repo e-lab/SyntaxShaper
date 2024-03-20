@@ -20,30 +20,18 @@ FEVER_SPLIT_FILE = {
 }
 
 EXAMPLE= """ 
-Question: Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?
-Thought 1: The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after.
-Action 1: search 
-Action_Input 1: Milhouse
-Observation 1: Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening.
-Thought 2: The paragraph does not tell who Milhouse is named after, maybe I can look up "named after".
-Action 1: lookup
-Action_Input 2: named after
-Observation 2: (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous. 
-Thought 3: Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon.
-Action 3: finish
-Action_Input 3: Richard Nixon
-Question: What profession does Nicholas Ray and Elia Kazan have in common?
-Thought 1: I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.
-Action 1: search
-Action_Input 1: Nicholas Ray
-Observation 1: Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 – June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.
-Thought 2: Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.
-Action 2: search
-Action_Input 2: Elia Kazan
-Observation 2: Elia Kazan was an American film and theatre director, producer, screenwriter and actor.
-Thought 3: Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.
-Action 3: finish 
-Action_Input 3: director, screenwriter, actor
+Question= Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?
+thought= "The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after."
+action= "search" 
+action_Input= "Milhouse"
+Observation= Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening.
+thought= "The paragraph does not tell who Milhouse is named after, maybe I can look up 'named after'."
+action= "lookup"
+action_Input= "named after"
+Observation= (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous.
+thought= "Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon."
+action= "finish"
+action_Input= "Richard Nixon"
 """ 
 
 class HistoryWrapper(gym.ObservationWrapper):

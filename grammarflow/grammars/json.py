@@ -7,6 +7,28 @@ from grammarflow.tools.pydantic import ModelParser
 
 class JSON:
     @staticmethod
+    def format(model: BaseModel):
+        grammar = ""
+        
+        fields, is_nested_model = ModelParser.extract_fields_with_descriptions([model])
+
+        if is_nested_model:
+            format_ = JSON.generate_prompt_from_fields({name: fields[name]})
+            del fields[name]
+        else:
+            format_ = JSON.generate_prompt_from_fields(fields)
+
+        grammar += f"```\n{format_}\n```\n"
+
+        if is_nested_model:
+            grammar += "Use the data types given below to fill in the above model\n```\n"
+            for nested_model in fields:
+                grammar += f"{JSON.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
+            grammar += "```"
+    
+        return grammar 
+
+    @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
         grammar, model_names, model_descrip, name = "", [], None, None 
         for task in grammars:

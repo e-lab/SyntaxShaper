@@ -7,6 +7,28 @@ from grammarflow.tools.pydantic import ModelParser
 
 class TOML:
     @staticmethod
+    def format(model: BaseModel):
+        grammar = ""
+    
+        fields, is_nested_model = ModelParser.extract_fields_with_descriptions([model])
+
+        if is_nested_model:
+            format_ = TOML.generate_prompt_from_fields({name: fields[name]})
+            del fields[name]
+        else:
+            format_ = TOML.generate_prompt_from_fields(fields)
+
+        grammar += f"```\n{format_}\n```\n"
+
+        if is_nested_model:
+            grammar += "Use the data types given below to fill in the above model\n```\n"
+            for nested_model in fields:
+                grammar += f"{TOML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
+            grammar += "```"
+    
+        return grammar 
+
+    @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
         grammar, model_names, model_descrip, name = "", [], None, None 
         for task in grammars:
@@ -119,25 +141,16 @@ class TOML:
 
             val = toml_string[start:i]
             try:
-                if "." in val:
-                    return float(val), i
-                return int(val), i
+                return eval(val), i
             except ValueError:
                 return val, i
 
         def parse_array(toml_string, i):
-            array = []
             i = skip_whitespace(toml_string, i + 1)
-            while toml_string[i].strip().replace("\n", "") != "]":
-                value, i = parse_value(toml_string, i)
-                array.append(value)
-                j = skip_whitespace(toml_string, i + 1)
-                if toml_string[i] == "]":
-                    break
-                i = j
-
-            array = [x for x in array if x]
-            return array, i + 1
+            start = i 
+            while toml_string[i] != "]":
+                i += 1
+            return eval(toml_string[start:i]), i + 1
 
         def parse_key(toml_string, i):
             start = i

@@ -8,6 +8,28 @@ from grammarflow.tools.pydantic import ModelParser
 
 class XML:
     @staticmethod
+    def format(model: BaseModel):
+        grammar = ""
+    
+        fields, is_nested_model = ModelParser.extract_fields_with_descriptions([model])
+
+        if is_nested_model:
+            format_ = XML.generate_prompt_from_fields({name: fields[name]})
+            del fields[name]
+        else:
+            format_ = XML.generate_prompt_from_fields(fields)
+
+        grammar += f"```\n{format_}\n```\n"
+
+        if is_nested_model:
+            grammar += "Use the data types given below to fill in the above model\n```\n"
+            for nested_model in fields:
+                grammar += f"{XML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
+            grammar += "```"
+    
+        return grammar 
+
+    @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
         grammar, model_names, model_descrip, name = "", [], None, None 
         for task in grammars:
@@ -108,40 +130,30 @@ class XML:
             return result
 
         def populate_structure(structure, storage):
-            # Initialize a queue with the structure's items
             queue = deque([(structure, None)])
 
             while queue:
                 current, parent_tag = queue.popleft()
 
-                # Check if the current item is a dict and process accordingly
                 if isinstance(current, dict):
                     for tag, value in current.items():
-                        # If value is a dict and not meant to be populated, enqueue it for further traversal
                         if isinstance(value, dict) and not value:
                             if tag in storage and storage[tag]:
                                 current[tag] = storage[tag].pop(0)["value"]
                             continue
                         elif isinstance(value, list):
-                            # If it's a list, enqueue all items with the current tag
                             for item in value:
                                 queue.append((item, tag))
                         else:
                             queue.append((value, tag))
-                # Check if the current item is a list and it's not directly under a 'nested' tag
                 elif isinstance(current, list) and parent_tag not in ["grammars", "grammars"]:
-                    # Assume lists at this level are homogeneous and represent multiple instances of an item
                     for item in current:
                         if isinstance(item, dict):
                             queue.append((item, parent_tag))
 
         def parse_tags(tags, storage):
-            # Step 1: Build the structure
             structure = build_structure(tags)
-
-            # Step 2: Populate the structure with values from storage
             populate_structure(structure, storage)
-
             return structure
 
         def parse_tag(xml_string, i):
@@ -198,13 +210,17 @@ class XML:
                         return False, i
                     elif value in ["null", "None"]:
                         return None, i
-                    elif value.isdigit():
-                        return int(value), i
-                    elif "." in value:
-                        return float(value), i
+                    else: 
+                        return eval(value), i 
                 except:
                     pass
                 return value, i
+        
+        def check_list(value): 
+            try: 
+                return list(value)
+            except: 
+                return False
 
         def sanity_check(tag):
             if " " in tag:
