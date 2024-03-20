@@ -23,7 +23,7 @@ requirements = [ir for ir in parse_requirements("./requirements.txt")]
 
 setup(
     name="GrammarFlow",
-    version="0.0.5",
+    version="0.0.6",
     author="AkshathRaghav",
     author_email="araviki@purdue.edu",
     description="Ensuring parsability of LLM responses in agent chains",

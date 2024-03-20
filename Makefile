@@ -21,4 +21,8 @@ upload:
 
 .PHONY: clean
 clean: 
-	rm -rf dist/ *.egg-info/
+	rm -rf dist/ *.egg-info/ build/
+
+.PHONY: commit
+commit: 
+	git add . && git commit -m "update" && git push upstream main 
