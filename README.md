@@ -25,6 +25,11 @@ The goal of this package was to overcome the issues faced when using langchain's
 1. Map out what your agent chain is doing. Understand what it's goals are and what data needs to be carried forward from one step to the next. 
 For example, consider the [ReAct prompting framework](https://react-lm.github.io/). In every call, we want to pass in the Action and subsequent Observation to the next call. 
 
+1.1. Load grammarflow 
+```
+from grammarflow import * 
+```
+
 2. Make a Pydantic Model for the above case. Here's a sample: 
 ```python 
 class ThoughtState(BaseModel):
@@ -103,6 +108,7 @@ observation = PerformSomeAction(
 ### Examples (@ samples/)
 1. For a general overview of what GrammarFlow can do, look at [demo.ipynb](https://github.com/e-lab/SyntaxShaper/blob/main/samples/demo.ipynb). 
 2. For my modification to [ReAct's](https://github.com/ysymyth/ReAct) evaluation code on [HotPotQA](https://hotpotqa.github.io/), look at [hotpotqa_modified](https://github.com/e-lab/SyntaxShaper/blob/main/samples/hotpotqa/hotpotqa_modified.ipynb).
+3. I've also added an implementation of a [data annotator](https://github.com/e-lab/SyntaxShaper/blob/main/samples/bert_finetuning/annotator.ipynb) for this [BERT fine-tuning guide](https://www.datasciencecentral.com/how-to-fine-tune-bert-transformer-with-spacy-3/).
 
 ### GNBF Grammar 
 
