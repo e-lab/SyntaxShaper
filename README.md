@@ -2,7 +2,10 @@
 
 # 🪢 GrammarFlow
 
-[![License](https://img.shields.io/github/license/e-lab/SyntaxShaper)](https://img.shields.io/github/license/e-lab/SyntaxShaper)
+
+<!-- [![Tests](https://github.com/abetlen/llama-cpp-python/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/abetlen/llama-cpp-python/actions/workflows/test.yaml) -->
+[![PyPI](https://img.shields.io/pypi/v/llama-cpp-python)](https://pypi.org/project/llama-cpp-python/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/llama-cpp-python)](https://pypi.org/project/llama-cpp-python/) [![License](https://img.shields.io/github/license/e-lab/SyntaxShaper)](https://img.shields.io/github/license/e-lab/SyntaxShaper)
+
 
 🚀 Supercharging Agent Chains with Constrained LLM outputs 🚀
 
@@ -175,7 +178,7 @@ We appreciate it if you would please cite this repo if you found the library use
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/e-lab/GrammarFlow}}, 
-  version = {0.0.6}
+  version = {0.0.7}
 }
 ```
 
