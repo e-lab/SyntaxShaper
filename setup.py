@@ -1,18 +1,4 @@
 from setuptools import find_packages, setup
-import typing
-
-
-def parse_requirements(filename: str) -> typing.List[str]:
-    req =  """
-        pydantic==1.9.0
-        tiktoken==0.6.0
-        llama-cpp-python==0.2.50   
-        openai==1.14.1
-    """
-    line_iter = (line.strip() for line in req.split("\n"))
-    return [line for line in line_iter if line]
-    
-requirements = parse_requirements("./requirements.txt")
 
 setup(
     name="GrammarFlow",
@@ -23,7 +9,13 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/e-lab/SyntaxShaper",
-    requires=requirements,
+    packages=find_packages(),
+    install_requires=[
+        'pydantic==1.9.0',
+        'tiktoken==0.6.0',
+        'llama-cpp-python==0.2.50',   
+        'openai==1.14.1'
+    ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
