@@ -130,7 +130,7 @@ class JSON:
                 return True, i + 4
             elif json_string[i : i + 5].lower() == "false":
                 return False, i + 5
-            elif json_string[i : i + 4] == "null":
+            elif json_string[i : i + 4].lower() in ["null", 'none']:
                 return None, i + 4
             else:
                 raise ValueError(f"Invalid character at {i}: {json_string[i]}")
@@ -164,6 +164,7 @@ class JSON:
             obj = {}
             while json_string[i] != "}":
                 key, i = parse_string(json_string, i)
+                key = key.replace("-", "_")
                 i = skip_whitespace(json_string, i)
                 if json_string[i] != ":":
                     raise ValueError(f'Expected ":" at {i}, got {json_string[i]}')

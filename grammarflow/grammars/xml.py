@@ -1,6 +1,7 @@
 from collections import deque
 from typing import List, Optional
 
+import re
 from pydantic import BaseModel
 
 from grammarflow.tools.pydantic import ModelParser
@@ -25,13 +26,15 @@ class XML:
             grammar += "Use the data types given below to fill in the above model\n```\n"
             for nested_model in fields:
                 grammar += f"{XML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-            grammar += "```"
+            grammar += "```\n"
     
         return grammar 
 
     @staticmethod
     def make_format(grammars: List[dict], return_sequence: str) -> str:
         grammar, model_names, model_descrip, name = "", [], None, None 
+
+
         for task in grammars:
             model = task.get("model")
 
@@ -70,7 +73,7 @@ class XML:
                 grammar += "Use the data types given below to fill in the above model\n```\n"
                 for nested_model in fields:
                     grammar += f"{XML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-                grammar += "```"
+                grammar += "```\n"
 
         return grammar, model_names
 
@@ -156,33 +159,39 @@ class XML:
             populate_structure(structure, storage)
             return structure
 
+        def find_attr_value_pairs(tag):
+            pattern = r'\b(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\')'
+            
+            matches = re.findall(pattern, tag)
+            results = []
+            for attr, value_double, value_single in matches:
+                value = value_double if value_double else value_single
+                results.append((attr, value))
+            
+            return results
+
         def parse_tag(xml_string, i):
             start = i
             while xml_string[i] != ">":
                 i += 1
             tag = xml_string[start:i]
-            try:
-                if " " in tag:
-                    tag, attr = tag.split(" ", 1)
-                    attr = dict(item.split("=") for item in attr.split())
-                else:
-                    attr = {}
-            except:
-                attr = {}
 
-            add_val_attr(tag, "", attr)
+            attr_value_pairs = find_attr_value_pairs(tag)
 
-            return tag, i + 1
+            if attr_value_pairs: 
+                for attr, value in attr_value_pairs:
+                    tag = tag.replace('=', '').replace(attr, '').replace(value, '')
 
-        def add_val_attr(tag, value, attr):
+            return tag.replace(' ', '').replace('/', '').replace('"', '').replace("-", "_"), i + 1, attr_value_pairs
+
+        def add_val(tag, value):
+            value = evaluate(value)
             temp = {}
-            if value:
+            if not (value == None):
                 if isinstance(value, str) and value.strip() in ["\n", "", " "]:
                     pass
                 else:
                     temp.update({"value": value})
-            if attr:
-                temp.update({"attributes": {key: value.replace('"', "") for key, value in attr.items()}})
 
             if tag in storage:
                 if temp:
@@ -192,43 +201,43 @@ class XML:
                 storage[tag] = [temp]
 
         def parse_value(xml_string, i):
+            i = skip_whitespace(xml_string, i)
             start = i
             temp_xml = xml_string.replace(" < ", "lsr")  # In case, '<' is used in the value
-            while temp_xml[i] != "<":
+            if temp_xml[i] == '"':
                 i += 1
+                start = i
+                while temp_xml[i] != '"':
+                    i += 1
+            else: 
+                while temp_xml[i] != "<":
+                    i += 1
+
             value = temp_xml[start:i].strip()
 
             if value == "":
                 return None, i
             else:
-                value = value.replace("lsr", " < ")
+                return value.replace("lsr", " < "), i
 
-                try:
-                    if value.lower() == "true":
-                        return True, i
-                    elif value.lower() == "false":
-                        return False, i
-                    elif value in ["null", "None"]:
-                        return None, i
-                    else: 
-                        return eval(value), i 
-                except:
-                    pass
-                return value, i
+        def evaluate(value):
+            try:
+                if value.lower().replace('"', '') == "true":
+                    return True
+                elif value.lower().replace('"', '') == "false":
+                    return False
+                elif value.lower().replace('"', '') in ["null", "none"]:
+                    return None
+                else: 
+                    return eval(value)
+            except:
+                return value
         
         def check_list(value): 
             try: 
                 return list(value)
             except: 
                 return False
-
-        def sanity_check(tag):
-            if " " in tag:
-                tag, attr = tag.split(" ", 1)
-                attr = dict(item.split("=") for item in attr.split())
-            else:
-                attr = {}
-            return tag, attr
 
         def skip_whitespace(xml_string, i):
             while i < len(xml_string) and xml_string[i] in " \t\r":
@@ -238,20 +247,29 @@ class XML:
         i = 0
         storage = {}
         tags = []
+
+        
         while i < len(xml_string):
             i = skip_whitespace(xml_string, i)
             if i >= len(xml_string):
                 break
             if xml_string[i] == "<":
-                if xml_string[i + 1] == "/":
-                    tag, i = parse_tag(xml_string, i + 2)
+                i = skip_whitespace(xml_string, i + 1)
+                if xml_string[i] == "/":
+                    tag, i, _ = parse_tag(xml_string, i + 1)
                 else:
-                    tag, i = parse_tag(xml_string, i + 1)
-                    tag, attr = sanity_check(tag)
-                    value, i = parse_value(xml_string, i)
-                    add_val_attr(tag, value, attr)
+                    tag, i, attr_value_pairs = parse_tag(xml_string, i)
+                    if attr_value_pairs:
+                        for attr, value in attr_value_pairs:
+                            add_val(tag, value)
+                        tags += [tag] # Attrs only need one tag 
+                    else: 
+                        value, i = parse_value(xml_string, i)
+                        add_val(tag, value)
+
                 tags += [tag]
             else:
-                break
+                while i < len(xml_string) and xml_string[i] != "<":
+                    i += 1
 
         return parse_tags(tags, storage)

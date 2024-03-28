@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="GrammarFlow",
-    version="0.0.7",
+    version="0.1.1",
     author="AkshathRaghav",
     author_email="araviki@purdue.edu",
     description="Ensuring parsability of LLM responses in agent chains",
@@ -13,8 +13,8 @@ setup(
     install_requires=[
         'pydantic==1.9.0',
         'tiktoken==0.6.0',
-        'llama-cpp-python==0.2.50',   
-        'openai==1.14.1'
+        'openai==1.14.1', 
+        'stopit==1.1.2',    
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -23,5 +23,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8, <3.10",
+    python_requires=">=3.8",
 )

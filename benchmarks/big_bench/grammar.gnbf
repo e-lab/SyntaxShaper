@@ -1,0 +1,10 @@
+root ::= ws StrategyQAModel
+StrategyQAModel ::= "<StrategyQAModel>" ws "<target-scores>" ws Score ws "</target-scores>" ws "<target>" ws string ws "</target>" ws "</StrategyQAModel>"
+ws ::= [ \t\n]
+nl ::= [\n]
+integer ::= ("-"? ([0-9] | [1-9] [0-9]*))
+Score ::= "<yes>" ws integer ws "</yes>" ws "<no>" ws integer ws "</no>"
+string ::=  "\"" (
+            [^"\\] |
+            "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
+            )* "\""

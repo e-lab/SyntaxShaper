@@ -7,14 +7,13 @@ from pydantic import BaseModel
 
 class GNBF:
     TYPE_RULES = {
-        "bool": r'("True" | "False")',
+        "boolean": r'("True" | "False")',
         "number": r'("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)?',
         "integer": r'("-"? ([0-9] | [1-9] [0-9]*))',
         "string": r''' "\"" (
             [^"\\] |
             "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
             )* "\""''',
-        # 'string': r'"\""   ([^"]*)   "\"" ws',
         "none": r"None",
     }
 
@@ -52,18 +51,11 @@ class GNBF:
         """,
             ["string", "xml", "number", "bool", "none", "array"],
         ],
-        "yaml": [
-            r"""
-            yaml ::= key ":"  {value}
-            key ::= string
-        """,
-            ["string", "number", "bool", "none", "array"],
-        ],
     }
 
     def __init__(self, model: BaseModel):
         self.json_obj = model.schema()
-        self.rules = {"ws": r"[ \t\n]*"}
+        self.rules = {"ws": r"[ \t\n]", "nl": r"[\n]"}
         self.used_data_types = set()
         self.grammar_entries = []
 
@@ -76,9 +68,11 @@ class GNBF:
             self.rules[sanitized_name] = definition
             return sanitized_name
 
-    def format_literal(self, literal):
-        if isinstance(literal, str):
+    def format_literal(self, literal, format_):
+        if format_ == 'json':
             return r'"\"' + literal.replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r") + r"\""
+        else:
+            return literal.replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r")
         return json.dumps(literal) + " ws"
 
     def convert_type(self, json_type):
@@ -86,21 +80,23 @@ class GNBF:
             self.used_data_types.add(json_type)
         return json_type
 
-    def handle_schema(self, schema, name="root"):
+    def handle_schema(self, schema,  format_, name="root",):
         if name == "root" and "definitions" in schema:
             for definition_name, definition_schema in schema["definitions"].items():
-                self.handle_schema(definition_schema, definition_name)
+                self.handle_schema(definition_schema,  format_, definition_name)
 
         if "items" in schema and "$ref" in schema["items"]:
             return schema["items"]["$ref"].split("/")[-1]
+        elif "$ref" in schema:
+            return schema["$ref"].split("/")[-1]
 
         schema_type = schema.get("type")
         if schema_type:
-            schema_type = schema_type.lower()
+            schema_type = schema_type
 
         if not schema_type:
             if "anyOf" in schema:
-                types = [self.handle_schema(sub_schema, name) for sub_schema in schema["anyOf"]]
+                types = [self.handle_schema(sub_schema,  format_, name) for sub_schema in schema["anyOf"]]
 
                 self.add_rule(name, " | ".join(types))
                 return name
@@ -109,16 +105,31 @@ class GNBF:
             properties = schema["properties"]
             prop_definitions = []
             for prop, prop_schema in properties.items():
-                prop_name = self.format_literal(prop)
-                prop_type = self.handle_schema(prop_schema, prop)
-                if prop_type == None:
-                    print(prop_schema)
-                prop_definitions.append(f'{prop_name}:" ws {prop_type}')
-            properties_rule = r' "," ws '.join(prop_definitions)
-            rule = f'"{{" ws {properties_rule} "}}" ws'
+                prop_name = self.format_literal(prop, format_)
+                prop_type = self.handle_schema(prop_schema, format_, prop)
+                if format_ == 'json':
+                    prop_definitions.append(f'{prop_name}:" ws {prop_type}')
+                elif format_ == 'xml': 
+                    prop_definitions.append(f'"<{prop_name}>" ws {prop_type} ws "</{prop_name}>"')
+                elif format_ == 'toml':
+                    if prop_type.strip()[0].islower(): prop_definitions.append(f'"{prop_name}" ws "=" ws {prop_type}')
+                    else: prop_definitions.append(f'{prop_type}')
+            if format_ == 'json':
+                properties_rule = r' "," nl '.join(prop_definitions)
+                if name == 'root': rule = f'nl "{{" {self.format_literal(self.json_obj['title'], 'json')}:" ws "{{" ws {properties_rule} "}}" ws "}}"'
+                else: rule = f'nl "{{" ws {properties_rule} "}}"'
+            elif format_ == 'xml':
+                properties_rule = r' ws '.join(prop_definitions)
+                if name == 'root': rule = f'"<{self.json_obj['title']}>" ws {properties_rule} ws "</{self.json_obj['title']}>"'
+                else: rule = f'{properties_rule}'
+            elif format_ == 'toml':
+                properties_rule = r' nl '.join(prop_definitions)
+                rule = f'"[{self.json_obj['title']}]" nl {properties_rule}'
+                if name == 'root': rule = f'"[{self.json_obj['title']}]" nl {properties_rule}'
+                else: rule = f'{properties_rule}'
             if name == "root":
                 self.grammar_entries.insert(0, f"{self.json_obj['title']} ::= {rule}")
-                self.grammar_entries.insert(0, f"{name} ::= {self.json_obj['title']} ws")
+                self.grammar_entries.insert(0, f"{name} ::= ws {self.json_obj['title']}")
             else:
                 self.add_rule(name, rule)
         elif schema_type in self.TYPE_RULES:
@@ -129,7 +140,7 @@ class GNBF:
             rule = rule.format(value=f"{name}-value").strip()
 
             if "items" in schema and schema["items"]:
-                types = [self.handle_schema(schema["items"], name)]
+                types = [self.handle_schema(schema["items"],  format_, name)]
             else:
                 for i, t in enumerate(types):
                     if t not in self.rules:
@@ -150,10 +161,10 @@ class GNBF:
 
         return name
 
-    def generate_grammar(self):
-        self.handle_schema(self.json_obj)
+    def generate_grammar(self, format_='json'):
+        self.handle_schema(self.json_obj, format_)
         self.grammar_entries += [f"{name} ::= {rule}" for name, rule in self.rules.items()]
-        return "\n".join(self.grammar_entries).lower().replace("_", "-")
+        return "\n".join(self.grammar_entries).replace("_", "-")
 
     @staticmethod
     def verify_grammar(grammar: str):

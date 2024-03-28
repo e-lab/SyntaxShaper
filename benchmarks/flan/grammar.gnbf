@@ -1,0 +1,14 @@
+root ::= ws CoT
+CoT ::= "<CoT>" ws "<chain-of-thought>" ws array ws "</chain-of-thought>" ws "<answer>" ws boolean ws "</answer>" ws "</CoT>"
+ws ::= [ \t\n]
+nl ::= [\n]
+string ::=  "\"" (
+            [^"\\] |
+            "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
+            )* "\""
+array ::= "[" ws (
+                chain-of-thought-value
+                ("," ws chain-of-thought-value)*
+            )? "]" ws
+chain-of-thought-value ::= string
+boolean ::= ("True" | "False")

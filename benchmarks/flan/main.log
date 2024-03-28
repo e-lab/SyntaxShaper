@@ -1,0 +1,72 @@
+[1711592244] Log start
+[1711592244] Cmd: /depot/euge/data/araviki/llama/llama.cpp/main --model /depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf --repeat_penalty 1.5 --n-gpu-layers 15000 --ctx_size 2048 --grammar-file ./grammar.gnbf --file ./prompt.txt --temp 0.1
+[1711592244] main: build = 2295 (87c91c07)
+[1711592244] main: built with gcc (GCC) 12.2.0 for x86_64-pc-linux-gnu
+[1711592244] main: seed  = 1711592244
+[1711592244] main: llama backend init
+[1711592244] main: load the model and apply lora adapter, if any
+[1711592244] llama_model_loader: loaded meta data with 19 key-value pairs and 723 tensors from /depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf (version GGUF V2)
+[1711592244] llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+[1711592244] llama_model_loader: - kv   0:                       general.architecture str              = llama
+[1711592244] llama_model_loader: - kv   1:                               general.name str              = LLaMA v2
+[1711592244] llama_model_loader: - kv   2:                       llama.context_length u32              = 4096
+[1711592244] llama_model_loader: - kv   3:                     llama.embedding_length u32              = 8192
+[1711592244] llama_model_loader: - kv   4:                          llama.block_count u32              = 80
+[1711592244] llama_model_loader: - kv   5:                  llama.feed_forward_length u32              = 28672
+[1711592244] llama_model_loader: - kv   6:                 llama.rope.dimension_count u32              = 128
+[1711592244] llama_model_loader: - kv   7:                 llama.attention.head_count u32              = 64
+[1711592244] llama_model_loader: - kv   8:              llama.attention.head_count_kv u32              = 8
+[1711592244] llama_model_loader: - kv   9:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+[1711592244] llama_model_loader: - kv  10:                          general.file_type u32              = 17
+[1711592244] llama_model_loader: - kv  11:                       tokenizer.ggml.model str              = llama
+[1711592244] llama_model_loader: - kv  12:                      tokenizer.ggml.tokens arr[str,32000]   = ["<unk>", "<s>", "</s>", "<0x00>", "<...
+[1711592244] llama_model_loader: - kv  13:                      tokenizer.ggml.scores arr[f32,32000]   = [0.000000, 0.000000, 0.000000, 0.0000...
+[1711592244] llama_model_loader: - kv  14:                  tokenizer.ggml.token_type arr[i32,32000]   = [2, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
+[1711592244] llama_model_loader: - kv  15:                tokenizer.ggml.bos_token_id u32              = 1
+[1711592244] llama_model_loader: - kv  16:                tokenizer.ggml.eos_token_id u32              = 2
+[1711592244] llama_model_loader: - kv  17:            tokenizer.ggml.unknown_token_id u32              = 0
+[1711592244] llama_model_loader: - kv  18:               general.quantization_version u32              = 2
+[1711592244] llama_model_loader: - type  f32:  161 tensors
+[1711592244] llama_model_loader: - type q5_K:  481 tensors
+[1711592244] llama_model_loader: - type q6_K:   81 tensors
+[1711592244] llm_load_vocab: special tokens definition check successful ( 259/32000 ).
+[1711592244] llm_load_print_meta: format           = GGUF V2
+[1711592244] llm_load_print_meta: arch             = llama
+[1711592244] llm_load_print_meta: vocab type       = SPM
+[1711592244] llm_load_print_meta: n_vocab          = 32000
+[1711592244] llm_load_print_meta: n_merges         = 0
+[1711592244] llm_load_print_meta: n_ctx_train      = 4096
+[1711592244] llm_load_print_meta: n_embd           = 8192
+[1711592244] llm_load_print_meta: n_head           = 64
+[1711592244] llm_load_print_meta: n_head_kv        = 8
+[1711592244] llm_load_print_meta: n_layer          = 80
+[1711592244] llm_load_print_meta: n_rot            = 128
+[1711592244] llm_load_print_meta: n_embd_head_k    = 128
+[1711592244] llm_load_print_meta: n_embd_head_v    = 128
+[1711592244] llm_load_print_meta: n_gqa            = 8
+[1711592244] llm_load_print_meta: n_embd_k_gqa     = 1024
+[1711592244] llm_load_print_meta: n_embd_v_gqa     = 1024
+[1711592244] llm_load_print_meta: f_norm_eps       = 0.0e+00
+[1711592244] llm_load_print_meta: f_norm_rms_eps   = 1.0e-05
+[1711592244] llm_load_print_meta: f_clamp_kqv      = 0.0e+00
+[1711592244] llm_load_print_meta: f_max_alibi_bias = 0.0e+00
+[1711592244] llm_load_print_meta: n_ff             = 28672
+[1711592244] llm_load_print_meta: n_expert         = 0
+[1711592244] llm_load_print_meta: n_expert_used    = 0
+[1711592244] llm_load_print_meta: pooling type     = 0
+[1711592244] llm_load_print_meta: rope type        = 0
+[1711592244] llm_load_print_meta: rope scaling     = linear
+[1711592244] llm_load_print_meta: freq_base_train  = 10000.0
+[1711592244] llm_load_print_meta: freq_scale_train = 1
+[1711592244] llm_load_print_meta: n_yarn_orig_ctx  = 4096
+[1711592244] llm_load_print_meta: rope_finetuned   = unknown
+[1711592244] llm_load_print_meta: model type       = 70B
+[1711592244] llm_load_print_meta: model ftype      = Q5_K - Medium
+[1711592244] llm_load_print_meta: model params     = 68.98 B
+[1711592244] llm_load_print_meta: model size       = 45.40 GiB (5.65 BPW) 
+[1711592244] llm_load_print_meta: general.name     = LLaMA v2
+[1711592244] llm_load_print_meta: BOS token        = 1 '<s>'
+[1711592244] llm_load_print_meta: EOS token        = 2 '</s>'
+[1711592244] llm_load_print_meta: UNK token        = 0 '<unk>'
+[1711592244] llm_load_print_meta: LF token         = 13 '<0x0A>'
+[1711592245] llm_load_tensors: ggml ctx size =    0.55 MiB

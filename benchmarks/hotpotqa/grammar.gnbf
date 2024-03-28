@@ -1,0 +1,8 @@
+root ::= ws Step
+Step ::= "<Step>" ws "<thought>" ws string ws "</thought>" ws "<action>" ws string ws "</action>" ws "<action-input>" ws string ws "</action-input>" ws "</Step>"
+ws ::= [ \t\n]
+nl ::= [\n]
+string ::=  "\"" (
+            [^"\\] |
+            "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
+            )* "\""

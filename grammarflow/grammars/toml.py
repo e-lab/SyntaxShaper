@@ -24,7 +24,7 @@ class TOML:
             grammar += "Use the data types given below to fill in the above model\n```\n"
             for nested_model in fields:
                 grammar += f"{TOML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-            grammar += "```"
+            grammar += "```\n"
     
         return grammar 
 
@@ -68,7 +68,7 @@ class TOML:
                 grammar += "Use the data types given below to fill in the above model\n```\n"
                 for nested_model in fields:
                     grammar += f"{TOML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-                grammar += "```"
+                grammar += "```\n"
 
         return grammar, model_names
 
@@ -100,7 +100,7 @@ class TOML:
             start = i
             while toml_string[i] != "]":
                 i += 1
-            key = toml_string[start:i]
+            key = toml_string[start:i].strip().replace("-", "_")
             i = skip_whitespace(toml_string, i + 1)
             section = {key: {}}
             while i < len(toml_string) and toml_string[i] not in "[":
@@ -109,7 +109,7 @@ class TOML:
                 if toml_string[i] == "=":
                     i = skip_whitespace(toml_string, i + 1)
                     value, i = parse_value(toml_string, i)
-                    section[key.replace("\n", "").replace(" ", "")][subkey.replace("\n", "").replace(" ", "")] = value
+                    section[key.replace("\n", "")][subkey.replace("\n", "").strip()] = value
                 i = skip_whitespace(toml_string, i)
             return section, i
 
@@ -136,7 +136,7 @@ class TOML:
             elif toml_string[start : start + 5].lower() == "false":
                 return False
 
-            while toml_string[i] in "0123456789.-":
+            while toml_string[i] in '01234567890.':
                 i += 1
 
             val = toml_string[start:i]
@@ -185,12 +185,13 @@ class TOML:
         while i < len(toml_string):
             i = skip_whitespace(toml_string, i)
             if i < len(toml_string) and toml_string[i] == "[":
-                section, i = parse_section(toml_string, i + 1)
+                i = skip_whitespace(toml_string, i + 1)
+                section, i = parse_section(toml_string, i)
                 key = list(section.keys())[0]
                 if key in storage:
-                    storage[key].append(section[key])
+                    storage[key.replace(' ', '')].append(section[key])
                 else:
-                    storage[key] = [section[key]]
+                    storage[key.replace(' ', '')] = [section[key]]
             else:
                 break
 

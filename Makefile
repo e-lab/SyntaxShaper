@@ -25,4 +25,4 @@ clean:
 
 .PHONY: commit
 commit: 
-	make clean && git add . && git commit -m "update" && git push upstream main 
+	git push origin main --force

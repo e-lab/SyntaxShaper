@@ -19,20 +19,29 @@ FEVER_SPLIT_FILE = {
   "dev": "paper_dev.jsonl",
 }
 
-EXAMPLE= """ 
-Question= Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?
-thought= "The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after."
-action= "search" 
-action_Input= "Milhouse"
-Observation= Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening.
-thought= "The paragraph does not tell who Milhouse is named after, maybe I can look up 'named after'."
-action= "lookup"
-action_Input= "named after"
-Observation= (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous.
-thought= "Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon."
-action= "finish"
-action_Input= "Richard Nixon"
-""" 
+EXAMPLE = { 
+  'question': "Musician and satirist Allie Goertz wrote a song about the 'The Simpsons' character Milhouse, who Matt Groening named after who?",
+  'steps': [ 
+    { 
+      'thought': "The question simplifies to 'The Simpsons' character Milhouse is named after who. I only need to search Milhouse and find who it is named after.",
+      'action': "search",
+      'action_input': "Milhouse",
+      'observation': "Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening."
+    },
+    { 
+      'thought': "The paragraph does not tell who Milhouse is named after, maybe I can look up 'named after'.",
+      'action': "lookup",
+      'action_input': "named after",
+      'observation': "Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous."
+    },
+    { 
+      'thought': "Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon.",
+      'action': "finish",
+      'action_input': "Richard Nixon"
+    }
+  ]
+}
+
 
 class HistoryWrapper(gym.ObservationWrapper):
   def __init__(self, env, obs_format, prompt=None):

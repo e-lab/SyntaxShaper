@@ -4,18 +4,29 @@
 
 
 <!-- [![Tests](https://github.com/abetlen/llama-cpp-python/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/abetlen/llama-cpp-python/actions/workflows/test.yaml) -->
-[![PyPI](https://img.shields.io/pypi/v/llama-cpp-python)](https://pypi.org/project/llama-cpp-python/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/llama-cpp-python)](https://pypi.org/project/llama-cpp-python/) [![License](https://img.shields.io/github/license/e-lab/SyntaxShaper)](https://img.shields.io/github/license/e-lab/SyntaxShaper)
+[![PyPI](https://img.shields.io/pypi/v/grammarflow)](https://pypi.org/project/grammarflow/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/grammarflow)](https://pypi.org/project/grammarflow) [![License](https://img.shields.io/github/license/e-lab/SyntaxShaper)](https://img.shields.io/github/license/e-lab/SyntaxShaper)
 
 
 🚀 Supercharging Agent Chains with Constrained LLM outputs 🚀
 
+
 </div>
+
+# Table of contents
+1. [What is this](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-what-is-this)
+2. [Quick Install](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-quick-install)
+3. [Code Usage](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-code-usage)
+4. [Examples (@ samples/)](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#examples--samples)
+5. [GNBF Grammar](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#gnbf-grammar)
+6. [Remarks!](#https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks)
+7. [Citation](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#citation)
+
 
 ## 🤔 What is this?
 
 This repository contains code to abstract the LLM output constraining process. It helps you define your grammar rules using Pydantic and Typing in a pythonic way, and inherently embeds metadata from these dataclasses into the prompt. Parsing is enabled in JSON, TOML and XML formats, with custom parsers that avoid the issues faced by `json.loads` (..etc) while parsing direct outputs. It can also create GNBF grammr from the same, which is used by the `llama.cpp` package for sampling logits smartly. 
 
-The goal of this package was to overcome the issues faced when using langchain's output parsers with local language models. While GPT-4 produces consistent results in returning the correct formats, Llama-7B would cause parsing errors in my testing chains with more complex prompts. 
+The goal of this package was to overcome the issues faced when using langchain's output parsers with instruct language models. While GPT-4 produces consistent results in returning the correct formats, Llama-7B would cause parsing errors in my testing chains with more complex prompts. 
 
 > Please reach out to `araviki [at] purdue [dot] edu` or open an issue on Github if you have any questions or inquiry related to GrammarFlow and its usage.
 
@@ -49,7 +60,6 @@ class ThoughtState(BaseModel):
 
 3. [Optional] Create a prompt template using grammarflow's PromptBuilder. Below is an example of the Llama prompt template. 
 ```python 
-from grammarflow import PromptBuilder
 llama_prompt = PromptBuilder()
 llama_prompt.add_section(
     text="<s>[INST] <<SYS>>\n{system_context}\n<</SYS>>",
@@ -71,8 +81,6 @@ user_message = """Who is Vladmir Putin?"""
 
 5. Invoke the `Constrain` block with the prompt. Set the configuration metadata, and format the prompt with the required `grammars` and `placeholders`.
 ```python
-from grammarflow import Constrain 
-
 with Constrain(llama_prompt) as manager:
     manager.set_config(
         format='json', # or 'xml', 'toml'. 
@@ -166,6 +174,14 @@ with Constrain(llama_prompt) as manager:
     response = manager.parse(llm_response)
 ```
 
+## Remarks!
+
+Please keep in mind that this package is purely software driven and aims to make developers lives a little simpler. Powerful models like GPT, Llama and Mixtral Instruct work well with this package. MoE systems are able to evaluate which model can provide reasoning and constrainability (purely how well it handles 'instructions').
+
+However, with an increase in the complexity of the prompt, most models fail. This has to do with the model itself, and can be improved using token sampling using llama.cpp. But, a purely prompt-based approach cannot solve everything. 
+
+Take, for example, you want to evaluate hotpotqa as explained in this notebook. When you run the scipt, you might find that Mixtral outputs parseable returns for JSON and XML formats in the first 2 runs. Post this, the model gets confused because of the way the prompt itself is constructed + ReAct's helper functions formats. 
+
 ## Citation
 
 We appreciate it if you would please cite this repo if you found the library useful for your work:
@@ -178,7 +194,7 @@ We appreciate it if you would please cite this repo if you found the library use
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/e-lab/GrammarFlow}}, 
-  version = {0.0.7}
+  version = {0.1.1}
 }
 ```
 

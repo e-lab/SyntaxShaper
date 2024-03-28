@@ -59,6 +59,10 @@ class ModelParser:
             else:
                 temp[field_name]["type"] = schema["properties"][field_name]["type"]
 
+            temp[field_name]["type"] = temp[field_name]["type"].replace("string", '"string"')
+
+            temp[field_name]["description"] = schema["properties"][field_name].get("description", None) 
+
         return temp
 
     @staticmethod
@@ -90,8 +94,8 @@ class ModelParser:
                 for nested_model_name, nested_model_schema in schema["definitions"].items():
                     fields[nested_model_name] = ModelParser.screen_model_schema(nested_model_schema)
 
-            update_dict(temp, ModelParser.screen_field_info(model))
             update_dict(temp, ModelParser.screen_model_schema(schema))
+            update_dict(temp, ModelParser.screen_field_info(model))
 
             if hasattr(model, "__name__"):
                 fields[model.__name__] = temp

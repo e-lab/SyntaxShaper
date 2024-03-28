@@ -60,4 +60,7 @@ class Response:
         return schema_dict
 
     def __str__(self):
-        return json.dumps(self._data, indent=4)
+        try :
+            return json.dumps(self._data, indent=4)
+        except: 
+            return str(self._data)

@@ -1,8 +1,11 @@
 from .grammars.json import JSON
 from .grammars.toml import TOML
 from .grammars.xml import XML
+from .grammars.gnbf import GNBF
 from .prompt.builder import Prompt, PromptBuilder
 from .tools.response import Response
+
+import re 
 
 class Constrain:
     def __init__(self, prompt):
@@ -10,6 +13,7 @@ class Constrain:
         # Keeps track of last run for inflation_rate()
         self.initial_prompt = None
         self.inflation = None
+        self.stop_at = ""
 
         if isinstance(prompt, str):
             prompt_config = PromptBuilder()
@@ -19,12 +23,16 @@ class Constrain:
             self.prompt = prompt_config
         elif isinstance(prompt, PromptBuilder) or isinstance(prompt, Prompt):
             self.prompt = prompt
+            self.stop_at = prompt.stop_at
         else:
             raise ValueError("Prompt must be a string, a PromptBuilder or a Prompt object.")
 
     def set_config(self, format='json', return_sequence='single_response'):
         self.config["format"] = format
         self.config["return_sequence"] = return_sequence
+
+    def get_grammar(self, model):
+        return GNBF(model).generate_grammar(self.config["format"])
 
     def format_prompt(self, grammars, placeholders=None, examples=None, enable_on=None):
         if not self.prompt:
@@ -38,6 +46,8 @@ class Constrain:
 
         if not placeholders:
             placeholders = {}
+        else: 
+            placeholders = {key: str(value) for key, value in placeholders.items()}
 
         if isinstance(self.prompt, Prompt):
             if not self.prompt.placeholders:
@@ -48,7 +58,6 @@ class Constrain:
         elif isinstance(self.prompt, PromptBuilder):
             self.initial_prompt = self.prompt.get_text()
             if placeholders:
-                
                 self.initial_prompt += " ".join(list([x for x in placeholders.values() if x]))
 
             self.prompt = self.prompt.build(self.config)
@@ -56,10 +65,19 @@ class Constrain:
         self.prompt = self.prompt.fill(**placeholders)
 
     def parse(self, return_value):
-        parsed_response = self.parse_helper(return_value)
+        if not return_value: 
+            return None 
+
+        if isinstance(return_value, str): return_value = return_value.replace('\\', '') # Removing escape; quite popular in local llms
+        try:
+            parsed_response = self.parse_helper(return_value)
+        except Exception as e:
+            print('Unable to parse: ', e)
+            return return_value
         try:
             return Response(parsed_response)  # Custom class for getting values from response
-        except:
+        except Exception as e:
+            print('Unable to make Response: ', e)
             return parsed_response
 
     def parse_helper(self, return_value):
@@ -68,13 +86,11 @@ class Constrain:
 
         if isinstance(return_value, str):
             if '```' in return_value:
-                return_value = (
-                    return_value.replace("```json", "```").replace("```xml", "```").replace("```toml", "```")
-                )  # Sometimes, name is added next to the terminals
+                return_value = re.sub(r"```.*?\n", "```", return_value, flags=re.DOTALL)
             else: 
                 return_value = f"```{return_value}```"
             returned_objects = [
-                split_string.replace("\n", "")
+                split_string.replace("\n", "").strip()
                 for split_string in return_value.split("```")[1::2]
                 if split_string.replace("\n", "").strip()
             ]  # Splitting between terminals and removing empty strings
