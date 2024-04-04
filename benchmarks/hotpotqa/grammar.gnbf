@@ -1,5 +1,5 @@
 root ::= ws Step
-Step ::= "<Step>" ws "<thought>" ws string ws "</thought>" ws "<action>" ws string ws "</action>" ws "<action-input>" ws string ws "</action-input>" ws "</Step>"
+Step ::= nl "{" "\"Step\":" ws "{" ws "\"thought\":" ws string "," nl "\"action\":" ws string "," nl "\"action-input\":" ws string "}" ws "}"
 ws ::= [ \t\n]
 nl ::= [\n]
 string ::=  "\"" (

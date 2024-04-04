@@ -1,0 +1,325 @@
+[1711598697] Log start
+[1711598697] Cmd: /depot/euge/data/araviki/llama/llama.cpp/main --model /depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf --repeat_penalty 1.5 --n-gpu-layers 15000 --ctx_size 2048 --grammar-file ./grammar.gnbf --file ./prompt.txt --temp 0.1
+[1711598697] main: build = 2295 (87c91c07)
+[1711598697] main: built with gcc (GCC) 12.2.0 for x86_64-pc-linux-gnu
+[1711598697] main: seed  = 1711598697
+[1711598697] main: llama backend init
+[1711598697] main: load the model and apply lora adapter, if any
+[1711598697] llama_model_loader: loaded meta data with 19 key-value pairs and 723 tensors from /depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf (version GGUF V2)
+[1711598697] llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+[1711598697] llama_model_loader: - kv   0:                       general.architecture str              = llama
+[1711598697] llama_model_loader: - kv   1:                               general.name str              = LLaMA v2
+[1711598697] llama_model_loader: - kv   2:                       llama.context_length u32              = 4096
+[1711598697] llama_model_loader: - kv   3:                     llama.embedding_length u32              = 8192
+[1711598697] llama_model_loader: - kv   4:                          llama.block_count u32              = 80
+[1711598697] llama_model_loader: - kv   5:                  llama.feed_forward_length u32              = 28672
+[1711598697] llama_model_loader: - kv   6:                 llama.rope.dimension_count u32              = 128
+[1711598697] llama_model_loader: - kv   7:                 llama.attention.head_count u32              = 64
+[1711598697] llama_model_loader: - kv   8:              llama.attention.head_count_kv u32              = 8
+[1711598697] llama_model_loader: - kv   9:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+[1711598697] llama_model_loader: - kv  10:                          general.file_type u32              = 17
+[1711598697] llama_model_loader: - kv  11:                       tokenizer.ggml.model str              = llama
+[1711598697] llama_model_loader: - kv  12:                      tokenizer.ggml.tokens arr[str,32000]   = ["<unk>", "<s>", "</s>", "<0x00>", "<...
+[1711598697] llama_model_loader: - kv  13:                      tokenizer.ggml.scores arr[f32,32000]   = [0.000000, 0.000000, 0.000000, 0.0000...
+[1711598697] llama_model_loader: - kv  14:                  tokenizer.ggml.token_type arr[i32,32000]   = [2, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
+[1711598697] llama_model_loader: - kv  15:                tokenizer.ggml.bos_token_id u32              = 1
+[1711598697] llama_model_loader: - kv  16:                tokenizer.ggml.eos_token_id u32              = 2
+[1711598697] llama_model_loader: - kv  17:            tokenizer.ggml.unknown_token_id u32              = 0
+[1711598697] llama_model_loader: - kv  18:               general.quantization_version u32              = 2
+[1711598697] llama_model_loader: - type  f32:  161 tensors
+[1711598697] llama_model_loader: - type q5_K:  481 tensors
+[1711598697] llama_model_loader: - type q6_K:   81 tensors
+[1711598697] llm_load_vocab: special tokens definition check successful ( 259/32000 ).
+[1711598697] llm_load_print_meta: format           = GGUF V2
+[1711598697] llm_load_print_meta: arch             = llama
+[1711598697] llm_load_print_meta: vocab type       = SPM
+[1711598697] llm_load_print_meta: n_vocab          = 32000
+[1711598697] llm_load_print_meta: n_merges         = 0
+[1711598697] llm_load_print_meta: n_ctx_train      = 4096
+[1711598697] llm_load_print_meta: n_embd           = 8192
+[1711598697] llm_load_print_meta: n_head           = 64
+[1711598697] llm_load_print_meta: n_head_kv        = 8
+[1711598697] llm_load_print_meta: n_layer          = 80
+[1711598697] llm_load_print_meta: n_rot            = 128
+[1711598697] llm_load_print_meta: n_embd_head_k    = 128
+[1711598697] llm_load_print_meta: n_embd_head_v    = 128
+[1711598697] llm_load_print_meta: n_gqa            = 8
+[1711598697] llm_load_print_meta: n_embd_k_gqa     = 1024
+[1711598697] llm_load_print_meta: n_embd_v_gqa     = 1024
+[1711598697] llm_load_print_meta: f_norm_eps       = 0.0e+00
+[1711598697] llm_load_print_meta: f_norm_rms_eps   = 1.0e-05
+[1711598697] llm_load_print_meta: f_clamp_kqv      = 0.0e+00
+[1711598697] llm_load_print_meta: f_max_alibi_bias = 0.0e+00
+[1711598697] llm_load_print_meta: n_ff             = 28672
+[1711598697] llm_load_print_meta: n_expert         = 0
+[1711598697] llm_load_print_meta: n_expert_used    = 0
+[1711598697] llm_load_print_meta: pooling type     = 0
+[1711598697] llm_load_print_meta: rope type        = 0
+[1711598697] llm_load_print_meta: rope scaling     = linear
+[1711598697] llm_load_print_meta: freq_base_train  = 10000.0
+[1711598697] llm_load_print_meta: freq_scale_train = 1
+[1711598697] llm_load_print_meta: n_yarn_orig_ctx  = 4096
+[1711598697] llm_load_print_meta: rope_finetuned   = unknown
+[1711598697] llm_load_print_meta: model type       = 70B
+[1711598697] llm_load_print_meta: model ftype      = Q5_K - Medium
+[1711598697] llm_load_print_meta: model params     = 68.98 B
+[1711598697] llm_load_print_meta: model size       = 45.40 GiB (5.65 BPW) 
+[1711598697] llm_load_print_meta: general.name     = LLaMA v2
+[1711598697] llm_load_print_meta: BOS token        = 1 '<s>'
+[1711598697] llm_load_print_meta: EOS token        = 2 '</s>'
+[1711598697] llm_load_print_meta: UNK token        = 0 '<unk>'
+[1711598697] llm_load_print_meta: LF token         = 13 '<0x0A>'
+[1711598698] llm_load_tensors: ggml ctx size =    0.55 MiB
+[1711598700] llm_load_tensors: offloading 80 repeating layers to GPU
+[1711598700] llm_load_tensors: offloading non-repeating layers to GPU
+[1711598700] llm_load_tensors: offloaded 81/81 layers to GPU
+[1711598700] llm_load_tensors:        CPU buffer size =   171.88 MiB
+[1711598700] llm_load_tensors:      CUDA0 buffer size = 46322.61 MiB
+[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598700] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598701] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598702] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598703] .[1711598704] .[1711598704] 
+[1711598704] llama_new_context_with_model: n_ctx      = 2048
+[1711598704] llama_new_context_with_model: freq_base  = 10000.0
+[1711598704] llama_new_context_with_model: freq_scale = 1
+[1711598704] llama_kv_cache_init:      CUDA0 KV buffer size =   640.00 MiB
+[1711598704] llama_new_context_with_model: KV self size  =  640.00 MiB, K (f16):  320.00 MiB, V (f16):  320.00 MiB
+[1711598704] llama_new_context_with_model:  CUDA_Host input buffer size   =    21.02 MiB
+[1711598704] llama_new_context_with_model:      CUDA0 compute buffer size =   324.00 MiB
+[1711598704] llama_new_context_with_model:  CUDA_Host compute buffer size =    16.00 MiB
+[1711598704] llama_new_context_with_model: graph splits (measure): 2
+[1711598704] warming up the model with an empty run
+[1711598704] n_ctx: 2048
+[1711598704] 
+[1711598704] system_info: n_threads = 32 / 64 | AVX = 1 | AVX_VNNI = 0 | AVX2 = 1 | AVX512 = 0 | AVX512_VBMI = 0 | AVX512_VNNI = 0 | FMA = 1 | NEON = 0 | ARM_FMA = 0 | F16C = 1 | FP16_VA = 0 | WASM_SIMD = 0 | BLAS = 0 | SSE3 = 1 | SSSE3 = 1 | VSX = 0 | MATMUL_INT8 = 0 | 
+[1711598704] add_bos: 1
+[1711598704] tokenize the prompt
+[1711598704] prompt: "### System:
+Answer high-school-level physics multiple-choice questions
+Here is the custom output format you are expected to return your response in.
+
+ :
+```
+<PhysicsQuestionsModel>
+<target> #List["string"]# </target> # List of example measurements. Example: ['1.2m', '3.4m', '5.6m']
+</PhysicsQuestionsModel>
+
+```
+
+RETURN ONLY ONE OF <PhysicsQuestionsModel>. TERMINALS = Cover output with '```'; End lines with newline. 
+
+
+### User:
+Hans Full is pulling on a rope to drag his backpack to school across the ice. He pulls upwards and rightwards with a force of 16.7 Newtons at an angle of 18 degrees above the horizontal to drag his backpack a horizontal distance of 72 meters to the right. Determine the work (in Joules) done upon the backpack.
+
+### Assistant:"
+[1711598704] tokens: [ '':1, ' ###':835, ' System':2184, ':':29901, '':13, 'Answer':22550, ' high':1880, '-':29899, 'school':27041, '-':29899, 'level':5563, ' physics':17558, ' multiple':2999, '-':29899, 'choice':16957, ' questions':5155, '':13, 'Here':10605, ' is':338, ' the':278, ' custom':2888, ' output':1962, ' format':3402, ' you':366, ' are':526, ' expected':3806, ' to':304, ' return':736, ' your':596, ' response':2933, ' in':297, '.':29889, '':13, '':13, ' :':584, '':13, '```':28956, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' #':396, 'List':1293, '["':3366, 'string':1807, '"]':3108, '#':29937, ' </':1533, 'target':5182, '>':29958, ' #':396, ' List':2391, ' of':310, ' example':1342, ' measurements':20398, '.':29889, ' Example':8741, ':':29901, ' ['':6024, '1':29896, '.':29889, '2':29906, 'm':29885, '',':742, ' '':525, '3':29941, '.':29889, '4':29946, 'm':29885, '',':742, ' '':525, '5':29945, '.':29889, '6':29953, 'm':29885, '']':2033, '':13, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '':13, '```':28956, '':13, '':13, 'RE':1525, 'T':29911, 'URN':24015, ' ON':6732, 'LY':16786, ' ON':6732, 'E':29923, ' OF':8079, ' <':529, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>.':15513, ' T':323, 'ER':1001, 'MIN':16173, 'AL':1964, 'S':29903, ' =':353, ' Cover':26428, ' output':1962, ' with':411, ' '':525, '```':28956, '';':2670, ' End':2796, ' lines':3454, ' with':411, ' newline':25899, '.':29889, ' ':29871, '':13, '':13, '':13, '##':2277, '#':29937, ' User':4911, ':':29901, '':13, 'H':29950, 'ans':550, ' Full':14846, ' is':338, ' pulling':28420, ' on':373, ' a':263, ' ro':696, 'pe':412, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' to':304, ' school':3762, ' across':4822, ' the':278, ' ice':14890, '.':29889, ' He':940, ' pull':8206, 's':29879, ' up':701, 'wards':2935, ' and':322, ' right':1492, 'wards':2935, ' with':411, ' a':263, ' force':4889, ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901 ]
+[1711598704] recalculate the cached logits (check): embd_inp.empty() false, n_matching_session_tokens 0, embd_inp.size() 229, session_tokens.size() 0, embd_inp.size() 229
+[1711598704] inp_pfx: [ '':1, ' ':29871, '':13, '':13, '##':2277, '#':29937, ' Inst':2799, 'ruction':4080, ':':29901, '':13, '':13 ]
+[1711598704] inp_sfx: [ ' ':29871, '':13, '':13, '##':2277, '#':29937, ' Response':13291, ':':29901, '':13, '':13 ]
+[1711598704] cml_pfx: [ '':1, ' ':29871, '':13, '<':29966, '|':29989, 'im':326, '_':29918, 'start':2962, '|':29989, '>':29958, 'user':1792, '':13 ]
+[1711598704] cml_sfx: [ ' <':529, '|':29989, 'im':326, '_':29918, 'end':355, '|':29989, '>':29958, '':13, '<':29966, '|':29989, 'im':326, '_':29918, 'start':2962, '|':29989, '>':29958, 'ass':465, 'istant':22137, '':13 ]
+[1711598704] sampling: 
+	repeat_last_n = 64, repeat_penalty = 1.500, frequency_penalty = 0.000, presence_penalty = 0.000
+	top_k = 40, tfs_z = 1.000, top_p = 0.950, min_p = 0.050, typical_p = 1.000, temp = 0.100
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000
+[1711598704] sampling order: 
+CFG -> Penalties -> top_k -> tfs_z -> typical_p -> top_p -> min_p -> temperature 
+[1711598704] generate: n_ctx = 2048, n_batch = 512, n_predict = -1, n_keep = 1
+[1711598704] 
+
+[1711598704] embd_inp.size(): 229, n_consumed: 0
+[1711598704] eval: [ '':1, ' ###':835, ' System':2184, ':':29901, '':13, 'Answer':22550, ' high':1880, '-':29899, 'school':27041, '-':29899, 'level':5563, ' physics':17558, ' multiple':2999, '-':29899, 'choice':16957, ' questions':5155, '':13, 'Here':10605, ' is':338, ' the':278, ' custom':2888, ' output':1962, ' format':3402, ' you':366, ' are':526, ' expected':3806, ' to':304, ' return':736, ' your':596, ' response':2933, ' in':297, '.':29889, '':13, '':13, ' :':584, '':13, '```':28956, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' #':396, 'List':1293, '["':3366, 'string':1807, '"]':3108, '#':29937, ' </':1533, 'target':5182, '>':29958, ' #':396, ' List':2391, ' of':310, ' example':1342, ' measurements':20398, '.':29889, ' Example':8741, ':':29901, ' ['':6024, '1':29896, '.':29889, '2':29906, 'm':29885, '',':742, ' '':525, '3':29941, '.':29889, '4':29946, 'm':29885, '',':742, ' '':525, '5':29945, '.':29889, '6':29953, 'm':29885, '']':2033, '':13, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '':13, '```':28956, '':13, '':13, 'RE':1525, 'T':29911, 'URN':24015, ' ON':6732, 'LY':16786, ' ON':6732, 'E':29923, ' OF':8079, ' <':529, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>.':15513, ' T':323, 'ER':1001, 'MIN':16173, 'AL':1964, 'S':29903, ' =':353, ' Cover':26428, ' output':1962, ' with':411, ' '':525, '```':28956, '';':2670, ' End':2796, ' lines':3454, ' with':411, ' newline':25899, '.':29889, ' ':29871, '':13, '':13, '':13, '##':2277, '#':29937, ' User':4911, ':':29901, '':13, 'H':29950, 'ans':550, ' Full':14846, ' is':338, ' pulling':28420, ' on':373, ' a':263, ' ro':696, 'pe':412, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' to':304, ' school':3762, ' across':4822, ' the':278, ' ice':14890, '.':29889, ' He':940, ' pull':8206, 's':29879, ' up':701, 'wards':2935, ' and':322, ' right':1492, 'wards':2935, ' with':411, ' a':263, ' force':4889, ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901 ]
+[1711598704] n_past = 229
+[1711598704] Resampling because token 2: '' does not meet grammar rules
+[1711598704] last: [ ' with':411, ' a':263, ' force':4889, ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13 ]
+[1711598704] n_remain: -2
+[1711598704] eval: [ '':13 ]
+[1711598704] n_past = 230
+[1711598704] Resampling because token 28956: '```' does not meet grammar rules
+[1711598704] last: [ ' a':263, ' force':4889, ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966 ]
+[1711598704] n_remain: -3
+[1711598704] eval: [ '<':29966 ]
+[1711598704] n_past = 231
+[1711598704] last: [ ' force':4889, ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847 ]
+[1711598704] n_remain: -4
+[1711598704] eval: [ 'Phys':25847 ]
+[1711598704] n_past = 232
+[1711598704] last: [ ' of':310, ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199 ]
+[1711598704] n_remain: -5
+[1711598704] eval: [ 'ics':1199 ]
+[1711598704] n_past = 233
+[1711598704] last: [ ' ':29871, '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182 ]
+[1711598704] n_remain: -6
+[1711598704] eval: [ 'Qu':2182 ]
+[1711598704] n_past = 234
+[1711598704] last: [ '1':29896, '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297 ]
+[1711598704] n_remain: -7
+[1711598704] eval: [ 'estions':2297 ]
+[1711598704] n_past = 235
+[1711598704] last: [ '6':29953, '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195 ]
+[1711598704] n_remain: -8
+[1711598704] eval: [ 'Model':3195 ]
+[1711598705] n_past = 236
+[1711598705] last: [ '.':29889, '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958 ]
+[1711598705] n_remain: -9
+[1711598705] eval: [ '>':29958 ]
+[1711598705] n_past = 237
+[1711598705] Resampling because token 2: '' does not meet grammar rules
+[1711598705] last: [ '7':29955, ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13 ]
+[1711598705] n_remain: -10
+[1711598705] eval: [ '':13 ]
+[1711598705] n_past = 238
+[1711598705] Resampling because token 28956: '```' does not meet grammar rules
+[1711598705] last: [ ' New':1570, 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966 ]
+[1711598705] n_remain: -11
+[1711598705] eval: [ '<':29966 ]
+[1711598705] n_past = 239
+[1711598705] last: [ 'tons':7453, ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182 ]
+[1711598705] n_remain: -12
+[1711598705] eval: [ 'target':5182 ]
+[1711598705] n_past = 240
+[1711598705] Resampling because token 24566: '>[' does not meet grammar rules
+[1711598705] last: [ ' at':472, ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958 ]
+[1711598705] n_remain: -13
+[1711598705] eval: [ '>':29958 ]
+[1711598705] n_past = 241
+[1711598705] Resampling because token 396: ' #' does not meet grammar rules
+[1711598705] last: [ ' an':385, ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518 ]
+[1711598705] n_remain: -14
+[1711598705] eval: [ ' [':518 ]
+[1711598705] n_past = 242
+[1711598705] Resampling because token 29900: '0' does not meet grammar rules
+[1711598705] last: [ ' angle':10696, ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376 ]
+[1711598705] n_remain: -15
+[1711598705] eval: [ ' "':376 ]
+[1711598705] n_past = 243
+[1711598705] last: [ ' of':310, ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943 ]
+[1711598705] n_remain: -16
+[1711598705] eval: [ 'F':29943 ]
+[1711598705] n_past = 244
+[1711598705] last: [ ' ':29871, '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918 ]
+[1711598705] n_remain: -17
+[1711598705] eval: [ '_':29918 ]
+[1711598705] n_past = 245
+[1711598705] last: [ '1':29896, '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916 ]
+[1711598705] n_remain: -18
+[1711598705] eval: [ 'x':29916 ]
+[1711598705] n_past = 246
+[1711598705] last: [ '8':29947, ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353 ]
+[1711598705] n_remain: -19
+[1711598705] eval: [ ' =':353 ]
+[1711598705] n_past = 247
+[1711598705] last: [ ' degrees':14496, ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383 ]
+[1711598705] n_remain: -20
+[1711598705] eval: [ ' F':383 ]
+[1711598705] n_past = 248
+[1711598705] last: [ ' above':2038, ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334 ]
+[1711598705] n_remain: -21
+[1711598705] eval: [ ' *':334 ]
+[1711598705] n_past = 249
+[1711598705] last: [ ' the':278, ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776 ]
+[1711598705] n_remain: -22
+[1711598705] eval: [ ' cos':6776 ]
+[1711598705] n_past = 250
+[1711598705] last: [ ' horizontal':14698, ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898 ]
+[1711598705] n_remain: -23
+[1711598705] eval: [ '(':29898 ]
+[1711598705] n_past = 251
+[1711598705] last: [ ' to':304, ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416 ]
+[1711598705] n_remain: -24
+[1711598705] eval: [ 'theta':3416 ]
+[1711598705] n_past = 252
+[1711598705] last: [ ' drag':8338, ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123 ]
+[1711598705] n_remain: -25
+[1711598705] eval: [ ')",':19123 ]
+[1711598705] n_past = 253
+[1711598705] Resampling because token 525: ' '' does not meet grammar rules
+[1711598705] last: [ ' his':670, ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376 ]
+[1711598705] n_remain: -26
+[1711598705] eval: [ ' "':376 ]
+[1711598705] n_past = 254
+[1711598705] last: [ ' back':1250, 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956 ]
+[1711598705] n_remain: -27
+[1711598705] eval: [ 'W':29956 ]
+[1711598706] n_past = 255
+[1711598706] last: [ 'pack':4058, ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922 ]
+[1711598706] n_remain: -28
+[1711598706] eval: [ '=':29922 ]
+[1711598706] n_past = 256
+[1711598706] last: [ ' a':263, ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453 ]
+[1711598706] n_remain: -29
+[1711598706] eval: [ 'FD':26453 ]
+[1711598706] n_past = 257
+[1711598706] last: [ ' horizontal':14698, ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908 ]
+[1711598706] n_remain: -30
+[1711598706] eval: [ '"':29908 ]
+[1711598706] n_past = 258
+[1711598706] Resampling because token 4514: ' ]' does not meet grammar rules
+[1711598706] last: [ ' distance':5418, ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962 ]
+[1711598706] n_remain: -31
+[1711598706] eval: [ ']':29962 ]
+[1711598706] n_past = 259
+[1711598706] Resampling because token 1533: ' </' does not meet grammar rules
+[1711598706] last: [ ' of':310, ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259 ]
+[1711598706] n_remain: -32
+[1711598706] eval: [ '  ':259 ]
+[1711598706] n_past = 260
+[1711598706] Resampling because token 1533: ' </' does not meet grammar rules
+[1711598706] last: [ ' ':29871, '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829 ]
+[1711598706] n_remain: -33
+[1711598706] eval: [ '</':829 ]
+[1711598706] n_past = 261
+[1711598706] last: [ '7':29955, '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182 ]
+[1711598706] n_remain: -34
+[1711598706] eval: [ 'target':5182 ]
+[1711598706] n_past = 262
+[1711598706] Resampling because token 2565: '></' does not meet grammar rules
+[1711598706] last: [ '2':29906, ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958 ]
+[1711598706] n_remain: -35
+[1711598706] eval: [ '>':29958 ]
+[1711598706] n_past = 263
+[1711598706] Resampling because token 396: ' #' does not meet grammar rules
+[1711598706] last: [ ' meters':27881, ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871 ]
+[1711598706] n_remain: -36
+[1711598706] eval: [ ' ':29871 ]
+[1711598706] n_past = 264
+[1711598706] Resampling because token 396: ' #' does not meet grammar rules
+[1711598706] last: [ ' to':304, ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829 ]
+[1711598706] n_remain: -37
+[1711598706] eval: [ '</':829 ]
+[1711598706] n_past = 265
+[1711598706] Resampling because token 1182: 'br' does not meet grammar rules
+[1711598706] last: [ ' the':278, ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847 ]
+[1711598706] n_remain: -38
+[1711598706] eval: [ 'Phys':25847 ]
+[1711598706] n_past = 266
+[1711598706] last: [ ' right':1492, '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199 ]
+[1711598706] n_remain: -39
+[1711598706] eval: [ 'ics':1199 ]
+[1711598706] n_past = 267
+[1711598706] last: [ '.':29889, ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182 ]
+[1711598706] n_remain: -40
+[1711598706] eval: [ 'Qu':2182 ]
+[1711598706] n_past = 268
+[1711598706] last: [ ' Det':5953, 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297 ]
+[1711598706] n_remain: -41
+[1711598706] eval: [ 'estions':2297 ]
+[1711598706] n_past = 269
+[1711598706] last: [ 'erm':837, 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195 ]
+[1711598706] n_remain: -42
+[1711598706] eval: [ 'Model':3195 ]
+[1711598706] n_past = 270
+[1711598706] Resampling because token 13885: '>`' does not meet grammar rules
+[1711598706] last: [ 'ine':457, ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958 ]
+[1711598706] n_remain: -43
+[1711598706] eval: [ '>':29958 ]
+[1711598706] n_past = 271
+[1711598706] last: [ ' the':278, ' work':664, ' (':313, 'in':262, ' J':435, 'ou':283, 'les':793, ')':29897, ' done':2309, ' upon':2501, ' the':278, ' back':1250, 'pack':4058, '.':29889, '':13, '':13, '##':2277, '#':29937, ' Ass':4007, 'istant':22137, ':':29901, '':13, '<':29966, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':13, '<':29966, 'target':5182, '>':29958, ' [':518, ' "':376, 'F':29943, '_':29918, 'x':29916, ' =':353, ' F':383, ' *':334, ' cos':6776, '(':29898, 'theta':3416, ')",':19123, ' "':376, 'W':29956, '=':29922, 'FD':26453, '"':29908, ']':29962, '  ':259, '</':829, 'target':5182, '>':29958, ' ':29871, '</':829, 'Phys':25847, 'ics':1199, 'Qu':2182, 'estions':2297, 'Model':3195, '>':29958, '':2 ]
+[1711598706] n_remain: -44
+[1711598706] found EOS token
+[1711598706]  [end of text]
+[1711598706] 
+[1711598706] llama_print_timings:        load time =    6351.54 ms
+[1711598706] llama_print_timings:      sample time =      99.58 ms /    59 runs   (    1.69 ms per token,   592.48 tokens per second)
+[1711598706] llama_print_timings: prompt eval time =     438.78 ms /   229 tokens (    1.92 ms per token,   521.90 tokens per second)
+[1711598706] llama_print_timings:        eval time =    2097.82 ms /    42 runs   (   49.95 ms per token,    20.02 tokens per second)
+[1711598706] llama_print_timings:       total time =    2659.78 ms /   271 tokens
+[1711598706] Log end

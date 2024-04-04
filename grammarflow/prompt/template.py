@@ -25,7 +25,7 @@ def Mistral(**kwargs):
   prompt.stop_at = "[/INST]"
   return prompt
 
-def Mixtral(): 
+def Mixtral(**kwargs): 
   prompt = PromptBuilder()
   prompt.add_section(text="SYSTEM: {instructions}", placeholders=['instructions'], define_grammar=True)
   prompt.add_section(text="USER: {prompt}", placeholders=['prompt'])
@@ -33,7 +33,7 @@ def Mixtral():
   prompt.add_section(text="ASSISTANT:")
   return prompt
 
-def ChatML(): 
+def ChatML(**kwargs): 
   prompt = PromptBuilder()
   prompt.add_section(text="<|im_start|>system\n{system_message}", placeholders=['system_message'], define_grammar=True)
   prompt.add_section(add_few_shot_examples=True)  

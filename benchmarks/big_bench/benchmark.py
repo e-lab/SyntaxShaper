@@ -187,6 +187,61 @@ def PhysicsQuestions(model_name, get_prompt, llm, verbose=False, **kwargs):
 
   return logs
 
+def ReasoningAboutColors(model_name, get_prompt, llm, verbose=False, **kwargs):
+  file_ = json.load(open('./data/reasoning_about_colors.json'))
+
+  logs = {'n_badcalls': 0, 'n_calls': 0, 'n_goodcalls': 0, 'n_matchedcall': 0, 'responses': [], 'expected': []} 
+
+  for ind, example in enumerate(file_['examples'][:n]): 
+    with Constrain(get_prompt(**kwargs)) as manager: 
+      manager.set_config(
+        format='json'
+      )
+      manager.format_prompt(
+        placeholders={
+          "instructions": file_['description'],
+          "prompt": example['input']
+        },
+        grammars=[{
+          'description': ' ', 
+          'model': Colors
+        }],
+      )
+
+      if verbose: 
+        print('-------------------')
+      response = llm(manager.prompt, grammar=manager.get_grammar(Colors), stop_at=manager.stop_at)
+      if response: 
+        if verbose:
+          print(response)
+          print('-------------------')
+        logs['responses'].append(response)
+        logs['n_calls'] += 1
+        response = manager.parse(response)
+        if verbose:
+          print(response)
+          print('-------------------')
+        if isinstance(response, Response):
+          logs['n_goodcalls'] += 1
+        else: 
+          logs['n_badcalls'] += 1
+          
+        del example['input']
+        del example['comment']
+        logs['expected'].append({'Colors': example})
+
+        # Response object always uses Model name at the topmost level. This is required for context-based multi-TOML parsing.
+        # I'm adding 'h' to the keys to match the model. Pydantic doesn't let me allot numbers as field names. 
+        if check_response(response, {'Colors': example}): 
+          logs['n_matchedcall'] += 1
+      else: 
+        continue
+
+    print(f'Step {ind}: [n_goodcalls: {logs["n_goodcalls"]}, n_badcalls: {logs["n_badcalls"]}, n_matchedcall: {logs["n_matchedcall"]}]')
+    save(logs, f'{model_name}_physicsquestions.json')
+
+  return logs
+
 if __name__ == '__main__':
   models = { 
     'Mistral-7B': (Mistral, LocalLlama(gguf_path='/depot/euge/data/araviki/llama/gguf/mistral-7b-instruct-v0.2.Q5_K_M.gguf', llama_cpp_path='/depot/euge/data/araviki/llama/llama.cpp'), {'ignore':True}), 
@@ -202,7 +257,7 @@ if __name__ == '__main__':
     logs[model_name] = {} 
     logs[model_name]['StrategyQA'] = StrategyQA(model_name, get_prompt, llm, verbose=False, **kwargs_)
     logs[model_name]['LogicGridPuzzle'] = LogicGridPuzzle(model_name, get_prompt, llm, verbose=False, **kwargs_)
-    logs[model_name]['PhysicsQuestions'] = PhysicsQuestions(model_name, get_prompt, llm, verbose=False, **kwargs_)
+    logs[model_name]['ReasoningAboutColors'] = ReasoningAboutColors(model_name, get_prompt, llm, verbose=False, **kwargs_)
     print('-------------------')
   
   print('-------------------------')

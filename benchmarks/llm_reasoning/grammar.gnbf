@@ -1,5 +1,5 @@
 root ::= ws CoT
-CoT ::= "<CoT>" ws "<chain-of-thought>" ws array ws "</chain-of-thought>" ws "<answer>" ws boolean ws "</answer>" ws "</CoT>"
+CoT ::= nl "{" "\"CoT\":" ws "{" ws "\"chain-of-thought\":" ws array "," nl "\"answer\":" ws boolean "}" ws "}"
 ws ::= [ \t\n]
 nl ::= [\n]
 string ::=  "\"" (

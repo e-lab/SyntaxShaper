@@ -122,12 +122,12 @@ class PromptBuilder:
             newline = "\\n"
             if len(model_names) > 1:
                 instruction = f"Here are the custom output formats you are expected to return your responses in"
-                reminders = "\nRETURN {} {}. TERMINALS = Cover output with '```'; End lines with newline. \n".format(
+                reminders = "\nRETURN {} {}. TERMINALS = Cover output with '***'; End lines with newline. \n".format(
                     response_type, ", ".join(model_names), newline
                 )
             else:
                 instruction = f"Here is the custom output format you are expected to return your response in."
-                reminders = "\nRETURN {} ONE OF {}. TERMINALS = Cover output with '```'; End lines with newline. \n".format(
+                reminders = "\nRETURN {} ONE OF {}. TERMINALS = Cover output with '***'; End lines with newline. \n".format(
                     response_type, ", ".join(model_names), newline
                 )
         else:

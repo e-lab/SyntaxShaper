@@ -6,12 +6,17 @@ import json, random, time
 from grammarflow.grammars.gnbf import GNBF
 from grammars import *
 import wikienv, wrappers
+import requests
 
 
 def step(env, action, action_input):
     attempts = 0
     while attempts < 10:
         try:
+          if not action: 
+            action = " " 
+          if not action_input:
+            action_input = " "
           if 'search' in action:
             action = 'search'
           elif 'lookup' in action:  
@@ -89,7 +94,7 @@ def make_example():
 
 # Helper functions 
 def load_history(history: dict): 
-  return "\n".join([f"""thought: {value['thought']}\naction: {value['action']}\naction_input: {value['action_input']}\nObservation: {value['observation']}"""
+  return "\n".join([f"""Observation {id_}: {value['observation']}"""
    for id_, value in history.items()])
 
 def log_step(response, observation, id_, to_print=True): 
@@ -122,7 +127,7 @@ def webthink(model_name, llm, idx=None, env=None, to_print=False):
     # The only major change we've made! 
     with Constrain(make_prompt(model_name)) as manager: 
       manager.set_config(
-        format='xml'
+        format='json'
       ) 
       manager.format_prompt(
         placeholders={ 
@@ -141,6 +146,10 @@ def webthink(model_name, llm, idx=None, env=None, to_print=False):
       ) 
     
       # print(manager.prompt)
+      if len(manager.prompt.split()) > 2000:
+        print('Prompt too long. Breaking.')
+        done = False 
+        break
       response = llm(manager.prompt, grammar=manager.get_grammar(Step), stop_at=manager.stop_at)
       n_calls += 1
 
@@ -196,7 +205,7 @@ if __name__ == '__main__':
   models = { 
     'Mistral-7B': LocalLlama(gguf_path='/depot/euge/data/araviki/llama/gguf/mistral-7b-instruct-v0.2.Q5_K_M.gguf', llama_cpp_path='/depot/euge/data/araviki/llama/llama.cpp'), 
     'CodeLlama2-13B': LocalLlama(gguf_path='/depot/euge/data/araviki/llama/gguf/codellama-13b-instruct.Q5_K_M.gguf', llama_cpp_path='/depot/euge/data/araviki/llama/llama.cpp'), 
-    'Llama2-70B': LocalLlama(gguf_path='/depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf', llama_cpp_path='/depot/euge/data/araviki/llama/llama.cpp')
+    # 'Llama2-70B': LocalLlama(gguf_path='/depot/euge/data/araviki/llama/gguf/upstage-llama-2-70b-instruct-v2.Q5_K_M.gguf', llama_cpp_path='/depot/euge/data/araviki/llama/llama.cpp')
   }
   logs = {} 
 

@@ -64,7 +64,7 @@ class LocalLlama:
     }
 
   @timeoutable()
-  def __call__(self, prompt: str, flags=None, grammar=None, stop_at="", temperature=0.1, timeout=20):
+  def __call__(self, prompt: str, flags=None, grammar=None, stop_at="", temperature=0.1, timeout=50):
       if flags: 
         self.flags.update(flags)
 

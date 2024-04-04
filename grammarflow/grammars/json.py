@@ -18,13 +18,13 @@ class JSON:
         else:
             format_ = JSON.generate_prompt_from_fields(fields)
 
-        grammar += f"```\n{format_}\n```\n"
+        grammar += f"***\n{format_}\n***\n"
 
         if is_nested_model:
-            grammar += "Use the data types given below to fill in the above model\n```\n"
+            grammar += "Use the data types given below to fill in the above model\n***\n"
             for nested_model in fields:
                 grammar += f"{JSON.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-            grammar += "```"
+            grammar += "***"
     
         return grammar 
 
@@ -66,15 +66,15 @@ class JSON:
             else: 
                 grammar += f"{name}:\n"
 
-            grammar += f"```\n{format_}\n```\n"
+            grammar += f"***\n{format_}\n***\n"
 
             if is_nested_model:
-                grammar += "Use the data types given below to fill in the above model\n```\n"
+                grammar += "Use the data types given below to fill in the above model\n***\n"
                 for nested_model in fields:
                     grammar += (
                         f"{JSON.generate_prompt_from_fields({nested_model: fields[nested_model]}, ignore=True)}\n"
                     )
-                grammar += "```"
+                grammar += "***"
 
         return grammar, model_names
 
@@ -122,7 +122,7 @@ class JSON:
                 return parse_object(json_string, i + 1)
             elif json_string[i] == "[":
                 return parse_array(json_string, i + 1)
-            elif json_string[i] in "0123456789-":
+            elif json_string[i] in "0123456789-.eE":
                 return parse_number(json_string, i)
             elif json_string[i] == '"':
                 return parse_string(json_string, i + 1)
@@ -137,22 +137,22 @@ class JSON:
 
         def parse_string(json_string, i):
             start = i
-            if json_string[i] == '"':
-                start = i + 1
-                i += 1
             while json_string[i] != '"':
                 i += 1
-            return json_string[start:i], i + 1
+            if json_string[start:i]: 
+                return json_string[start:i], i + 1
+            return None, i + 1
 
         def parse_number(json_string, i):
             start = i
             while json_string[i] in "0123456789.-eE":
                 i += 1
-            return int(json_string[start:i]), i
+            return eval(json_string[start:i]), i
 
         def parse_array(json_string, i):
             array = []
             while json_string[i] != "]":
+                i = skip_whitespace(json_string, i)
                 value, i = parse_value(json_string, i)
                 array.append(value)
                 i = skip_whitespace(json_string, i)
@@ -163,7 +163,8 @@ class JSON:
         def parse_object(json_string, i):
             obj = {}
             while json_string[i] != "}":
-                key, i = parse_string(json_string, i)
+                i = skip_whitespace(json_string, i)
+                key, i = parse_string(json_string, i + 1)
                 key = key.replace("-", "_")
                 i = skip_whitespace(json_string, i)
                 if json_string[i] != ":":

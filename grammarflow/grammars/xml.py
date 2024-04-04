@@ -20,13 +20,13 @@ class XML:
         else:
             format_ = XML.generate_prompt_from_fields(fields)
 
-        grammar += f"```\n{format_}\n```\n"
+        grammar += f"***\n{format_}\n***\n"
 
         if is_nested_model:
-            grammar += "Use the data types given below to fill in the above model\n```\n"
+            grammar += "Use the data types given below to fill in the above model\n***\n"
             for nested_model in fields:
                 grammar += f"{XML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-            grammar += "```\n"
+            grammar += "***\n"
     
         return grammar 
 
@@ -67,13 +67,13 @@ class XML:
             else: 
                 grammar += f"{name}:\n"
 
-            grammar += f"```\n{format_}\n```\n"
+            grammar += f"***\n{format_}\n***\n"
 
             if is_nested_model:
-                grammar += "Use the data types given below to fill in the above model\n```\n"
+                grammar += "Use the data types given below to fill in the above model\n***\n"
                 for nested_model in fields:
                     grammar += f"{XML.generate_prompt_from_fields({nested_model: fields[nested_model]})}\n"
-                grammar += "```\n"
+                grammar += "***\n"
 
         return grammar, model_names
 

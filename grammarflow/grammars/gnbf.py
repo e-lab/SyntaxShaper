@@ -27,30 +27,6 @@ class GNBF:
             )? "]" ws""",
             ["string", "number", "bool", "none"],
         ],
-        "toml": [
-            r"""
-            toml ::= "[" key "]" (key "="  {value})*
-            key ::= string
-        """,
-            ["string", "number", "bool", "none", "array"],
-        ],
-        "json": [
-            r"""
-            "{" (key ":" {value} ("," key ":" {value})*)? "}"
-            key ::= string
-        """,
-            ["string", "number", "bool", "none", "array"],
-        ],
-        "xml": [
-            r"""   
-        xml ::= "<" tag_name attributes? ">" content "</" tag_name ">"
-            tag_name ::= string
-            attributes ::= (attribute_name "="  {value})*
-            attribute_name ::= string
-            content ::= string | xml
-        """,
-            ["string", "xml", "number", "bool", "none", "array"],
-        ],
     }
 
     def __init__(self, model: BaseModel):
@@ -59,11 +35,8 @@ class GNBF:
         self.used_data_types = set()
         self.grammar_entries = []
 
-    def sanitize_rule_name(self, name):
-        return re.sub(r"[^a-zA-Z0-9-]+", "-", name)
-
     def add_rule(self, name, definition):
-        sanitized_name = self.sanitize_rule_name(name)
+        sanitized_name = re.sub(r"[^a-zA-Z0-9-]+", "-", name)
         if sanitized_name not in self.rules or self.rules[sanitized_name] == definition:
             self.rules[sanitized_name] = definition
             return sanitized_name
@@ -90,9 +63,12 @@ class GNBF:
         elif "$ref" in schema:
             return schema["$ref"].split("/")[-1]
 
-        schema_type = schema.get("type")
-        if schema_type:
-            schema_type = schema_type
+        schema_type = schema.get('pattern')
+
+        if not schema_type:
+            schema_type = schema.get("type")
+        else: 
+            return schema_type
 
         if not schema_type:
             if "anyOf" in schema:
