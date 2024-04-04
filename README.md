@@ -40,6 +40,7 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 
 [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/) - Requires handling multiple fields in grammar (Single object with list). 
 
+```
 +------------------------------------------------------------------------------------------------------+
 |    Model Name   |Parameters|Logic Grid Puzzle (n=200)|StrategyQA (n=200)|ReasoningAboutColors (n=200)|
 +-----------------+----------+-------------------------+------------------+----------------------------+
@@ -49,11 +50,13 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 +-----------------+----------+-------------------------+------------------+----------------------------+
 |    Llama2-70B   |    70B   |          100.0          |       100.0      |            100.0           |
 +------------------------------------------------------------------------------------------------------+
+```
 
 [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
 
 [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
 
+```
 +-------------------------------------------------------------------------------+------------------------+
 |    Model Name   |Parameters|PrOntoQA Parsing (n=200)|PrOntoQA Accuracy (n=200)|HotPotQA Parsing (n=200)|
 +-----------------+----------+------------------------+-------------------------+------------------------+
@@ -63,7 +66,7 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 +-------------------------------------------------------------------------------+------------------------+
 |    Llama2-70B   |    70B   |          96.5          |           81.9          |          99.0          |
 +-------------------------------------------------------------------------------+------------------------+
-
+```
 
 ## ⚡ Quick Install
 
