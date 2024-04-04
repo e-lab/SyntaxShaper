@@ -18,7 +18,7 @@
 3. [Code Usage](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-code-usage)
 4. [Examples (@ samples/)](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#examples--samples)
 5. [GNBF Grammar](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#gnbf-grammar)
-6. [Remarks!](#https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks)
+6. [Remarks!](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks)
 7. [Citation](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#citation)
 
 
@@ -35,10 +35,11 @@ The goal of this package was to overcome the issues faced when using langchain's
 GrammarFlow was tested against popular LLM datasets, mainly focused on constraining model outputs. The goal was to ensure that the final parsed output matched both the *structure and data types* of the ground truth. 
 
 [Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/) - Simple grammar (Nested Objects with lists), large prompts. 500 words+.
+
 [StrategyQA](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/strategyqa/task.json) - Simplest grammar (Nested Objects with str/int). 
+
 [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/) - Requires handling multiple fields in grammar (Single object with list). 
 
-```
 +------------------------------------------------------------------------------------------------------+
 |    Model Name   |Parameters|Logic Grid Puzzle (n=200)|StrategyQA (n=200)|ReasoningAboutColors (n=200)|
 +-----------------+----------+-------------------------+------------------+----------------------------+
@@ -48,12 +49,11 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 +-----------------+----------+-------------------------+------------------+----------------------------+
 |    Llama2-70B   |    70B   |          100.0          |       100.0      |            100.0           |
 +------------------------------------------------------------------------------------------------------+
-```
 
 [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
+
 [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
 
-```
 +-------------------------------------------------------------------------------+------------------------+
 |    Model Name   |Parameters|PrOntoQA Parsing (n=200)|PrOntoQA Accuracy (n=200)|HotPotQA Parsing (n=200)|
 +-----------------+----------+------------------------+-------------------------+------------------------+
@@ -63,7 +63,6 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 +-------------------------------------------------------------------------------+------------------------+
 |    Llama2-70B   |    70B   |          96.5          |           81.9          |          99.0          |
 +-------------------------------------------------------------------------------+------------------------+
-```
 
 
 ## ⚡ Quick Install
@@ -91,13 +90,9 @@ user_message = """Who is Vladmir Putin?"""
 
 with Constrain(prompt, 'xml') as manager:
     # Makes the changes to the prompt
-    manager.format_prompt(placeholders={ 
-                          'prompt': user_message,
-                          'instructions': system_context
-                          },
-                          grammars=[{
-                              'model': AgentStep
-                          }]
+    manager.format_prompt(
+        placeholders={'prompt': user_message, 'instructions': system_context},
+        grammars=[{'model': AgentStep}]
     )
 
     llm_response = llm(manager.prompt, temperature=0.01)
@@ -118,7 +113,7 @@ GrammarFlow is mainly meant to be an add-on to your existing LLM applications. I
 - [X] **GBNF Support**: Converts any Pydantic model to GNBF grammar for using with [llama.cpp](https://github.com/ggerganov/llama.cpp/)'s token-based sampling. Enables adding regex patterns directly. 
 - [x] **Easy Integration**: Integrates with any package or stack by just manipulating the prompt and decoding the result into a pythonic data abstractor. Treats everything in between as a **black box**.
 - [x] **Handles Complex Grammars**: Can handle typing objects ('List', 'Dict', etc.) and nested Pydantic logic with complex data-types. 
-- [x] **Experiments with different 'formats'**: Defines grammar rules in XML, JSON and TOML formats. JSON is the standard, while XML is best for (+3) nested parsing and TOMl is best when you want to get multiple models parsed simulatenously. Each has it's own usecase as described in the demo.
+- [x] **Experiments with different 'formats'**: Defines grammar rules in XML, JSON and TOML formats. JSON is the standard, while XML is best for (+3) nested parsing and TOML is best when you want to get multiple models parsed simulatenously. Each has it's own usecase as described in the demo.
 - [x] **Reduces hallucinations or garbage results during sampling**: GBNF grammars allow for controlled whitespacing/identation and model generation ordering, while parsing logic allows for ignoring incorrect terminal symbols.  
 
 ### Examples (@ samples/)
@@ -188,7 +183,7 @@ task ::= "{" ws "\"title\":" ws string "," ws "\"description\":" ws string "," w
 
 You can use this grammar to pass into [llama.cpp](https://github.com/ggerganov/llama.cpp/) through a barebones LLM class that is provided. 
 
-```
+```python
 llm = LocalLlama() 
 response = llm(manager.prompt, grammar=manager.get_grammar(CoT), stop_at=manager.stop_at)
 ```
