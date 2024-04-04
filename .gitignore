@@ -29,10 +29,8 @@ main.log
 */out.txt
 
 */results/
-*/data/
 */data_*.json
 */numbers.json
-data/
 results/
 benchmarker.ipynb
 benchmarks/*/main.log 
