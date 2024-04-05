@@ -32,7 +32,7 @@ The goal of this package was to overcome the issues faced when using langchain's
 
 ## Results: 
 
-GrammarFlow was tested against popular LLM datasets, mainly focused on constraining model outputs. The goal was to ensure that the final parsed output matched both the *structure and data types* of the ground truth. 
+GrammarFlow was tested against popular LLM datasets, with a focus on constraining model outputs. The goal was to ensure that the final parsed output matched both the *structure and data types* of the ground truth. 
 
 [Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/) - Simple grammar (Nested Objects with lists), large prompts. 500 words+.
 
@@ -41,15 +41,15 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/) - Requires handling multiple fields in grammar (Single object with list). 
 
 ```
-+------------------------------------------------------------------------------------------------------+
+|------------------------------------------------------------------------------------------------------|
 |    Model Name   |Parameters|Logic Grid Puzzle (n=200)|StrategyQA (n=200)|ReasoningAboutColors (n=200)|
-+-----------------+----------+-------------------------+------------------+----------------------------+
+|-----------------+----------+-------------------------+------------------+----------------------------|
 |    Mistral-7B   |    7B    |          100.0          |       100.0      |            100.0           |
-+-----------------+----------+-------------------------+------------------+----------------------------+
+|-----------------+----------+-------------------------+------------------+----------------------------|
 |  CodeLlama2-13B |    13B   |          100.0          |       100.0      |            100.0           |
-+-----------------+----------+-------------------------+------------------+----------------------------+
+|-----------------+----------+-------------------------+------------------+----------------------------|
 |    Llama2-70B   |    70B   |          100.0          |       100.0      |            100.0           |
-+------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------|
 ```
 
 [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
@@ -57,15 +57,15 @@ GrammarFlow was tested against popular LLM datasets, mainly focused on constrain
 [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
 
 ```
-+-------------------------------------------------------------------------------+------------------------+
+|------------------------------------------------------------------------------+-------------------------|
 |    Model Name   |Parameters|PrOntoQA Parsing (n=200)|PrOntoQA Accuracy (n=200)|HotPotQA Parsing (n=200)|
-+-----------------+----------+------------------------+-------------------------+------------------------+
+|-----------------+----------+------------------------+-------------------------+------------------------|
 |    Mistral-7B   |    7B    |           99           |           88.5          |          99.0          |
-+-----------------+----------+------------------------+-------------------------+------------------------+
+|-----------------+----------+------------------------+-------------------------+------------------------|
 |  CodeLlama2-13B |    13B   |          97.5          |           55.5          |          100.0         |
-+-------------------------------------------------------------------------------+------------------------+
+|-------------------------------------------------------------------------------+------------------------|
 |    Llama2-70B   |    70B   |          96.5          |           81.9          |          99.0          |
-+-------------------------------------------------------------------------------+------------------------+
+|-------------------------------------------------------------------------------+------------------------|
 ```
 
 ## ⚡ Quick Install

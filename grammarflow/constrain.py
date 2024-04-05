@@ -8,8 +8,10 @@ from .tools.response import Response
 import re 
 
 class Constrain:
-    def __init__(self, prompt):
+    def __init__(self, prompt, format_='json', return_sequence='single_response'):
         self.config = {} 
+        self.config["format"] = format_
+        self.config["return_sequence"] = return_sequence
         # Keeps track of last run for inflation_rate()
         self.initial_prompt = None
         self.inflation = None
@@ -26,10 +28,6 @@ class Constrain:
             self.stop_at = prompt.stop_at
         else:
             raise ValueError("Prompt must be a string, a PromptBuilder or a Prompt object.")
-
-    def set_config(self, format='json', return_sequence='single_response'):
-        self.config["format"] = format
-        self.config["return_sequence"] = return_sequence
 
     def get_grammar(self, model):
         return GNBF(model).generate_grammar(self.config["format"])
