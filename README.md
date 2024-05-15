@@ -30,9 +30,9 @@ GrammarFlow abstracts the **LLM constraining process for complex-response tasks*
 
 Importantly, the package supports the generation of **GNBF grammar**, which integrates seamlessly with the [llama.cpp](https://github.com/ggerganov/llama.cpp/)  package. This integration allows for more intelligent sampling of logits, optimizing the response quality from models.
 
-The goal of this package was to overcome the issues faced when using LangChain's output parsers with instruct language models locally. While GPT-4 produces consistent results in returning the correct formats, local models from families like Llama and Mistral would cause parsing errors in my testing chains when I need more than just a single string response. Recently, GrammarFlow was extended to cover more features to help anyone trying to work with LLMs for complex use-cases: multi-grammar generation, regex patterns, etc. 
+The goal of this package was to overcome the issues faced when using LangChain's output parsers with instruct language models locally. While GPT-4 produces consistent results in returning the correct formats, local models from families like Llama and Mistral would cause parsing errors in my testing chains when I need more than just a single string response. Since then, GrammarFlow was extended to cover more features to help anyone trying to work with LLMs for complex use-cases: multi-grammar generation, regex patterns, etc. 
 
-Moreover, GrammarFlow is meant for use-cases with (any kind of) AI Agents, as well as extracting content from text or question-answering problems. This allows it to have an *edge over* *batched LLM generation* and *schema recomposing*. These methods, although foolproof, would require *many more calls* to an inference function, which will increase the total cost of a use-case if using a paid service like GPT or Gemini. Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks) section to get a complete understanding of what this means. 
+Moreover, GrammarFlow is meant for use-cases with (any kind of) AI Agents, as well as extracting content from text or question-answering problems. This allows it to have an *edge over* *batched LLM generation* and *schema recomposing*. These methods, although foolproof, would require **many more calls** to an inference function, which will increase the total cost of a use-case if using a paid service like GPT or Gemini. Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks) section to get a complete understanding of what this means. 
 
 > Please reach out to `araviki[at]purdue[dot]edu` or open an issue on Github if you have any questions or inquiry related to GrammarFlow and its usage.
 
@@ -67,9 +67,9 @@ More complex tests:
 |-----------------+----------+------------------------+-------------------------+------------------------|
 |    Mistral-7B   |    7B    |           99           |           88.5          |          99.0          |
 |-----------------+----------+------------------------+-------------------------+------------------------|
-|  CodeLlama2-13B |    13B   |          97.5          |           55.5          |          100.0         |
+|  CodeLlama2-13B |    13B   |          98.5          |           55.5          |          100.0         |
 |-------------------------------------------------------------------------------+------------------------|
-|    Llama2-70B   |    70B   |          96.5          |           81.9          |          99.0          |
+|    Llama2-70B   |    70B   |          97.5          |           81.9          |          99.0          |
 |-------------------------------------------------------------------------------+------------------------|
 ```
 
