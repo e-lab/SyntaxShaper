@@ -32,9 +32,7 @@ Importantly, the package supports the generation of **GNBF grammar**, which inte
 
 The goal of this package was to overcome the issues faced when using LangChain's output parsers with instruct language models locally. While GPT-4 produces consistent results in returning the correct formats, local models from families like Llama and Mistral would cause parsing errors in my testing chains when I need more than just a single string response. Recently, GrammarFlow was extended to cover more features to help anyone trying to work with LLMs for complex use-cases: multi-grammar generation, regex patterns, etc. 
 
-Moreover, GrammarFlow is meant for use-cases with (any kind of) AI Agents, as well as extracting content from text or question-answering problems. This allows it to have an *edge over* batched LLM generation and schema recomposing. The above methods would require *much higher #calls* to an inference function, which will increase the total cost of an iteration if using a paid service like GPT or Gemini.  
-
-Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks) section to get a complete understanding of what we're doing. 
+Moreover, GrammarFlow is meant for use-cases with (any kind of) AI Agents, as well as extracting content from text or question-answering problems. This allows it to have an *edge over* *batched LLM generation* and *schema recomposing*. These methods, although foolproof, would require *many more calls* to an inference function, which will increase the total cost of a use-case if using a paid service like GPT or Gemini. Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks) section to get a complete understanding of what this means. 
 
 > Please reach out to `araviki[at]purdue[dot]edu` or open an issue on Github if you have any questions or inquiry related to GrammarFlow and its usage.
 
@@ -43,9 +41,9 @@ Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?t
 GrammarFlow was tested against popular LLM datasets, with a focus on constraining model outputs. The goal was to ensure that the final parsed output matched both the *structure and data types* of the ground truth. 
 
 Some basic tests using Google's [BIG-bench](https://github.com/google/BIG-bench):
-    - [Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/)
-    - [StrategyQA](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/strategyqa/task.json)
-    - [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/)
+- [Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/) - Nested Objects with lists.
+- [StrategyQA](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/strategyqa/task.json) - Nested Objects with str/int.
+- [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/) - Single object with list.
 
 ```
 |------------------------------------------------------------------------------------------------------|
@@ -59,9 +57,9 @@ Some basic tests using Google's [BIG-bench](https://github.com/google/BIG-bench)
 +------------------------------------------------------------------------------------------------------|
 ```
 
-For more complex tests: 
-    - [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
-    - [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
+More complex tests: 
+- [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). **Tests the ability to place specific reasoning statements in the right place.**
+- [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). **Incremental steps, leading to large prompts.**
 
 ```
 |------------------------------------------------------------------------------+-------------------------|
@@ -260,7 +258,7 @@ We appreciate it if you would please cite this repo if you found the library use
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/e-lab/GrammarFlow}}, 
-  version = {0.1.1}
+  version = {0.1.0}
 }
 ```
 
