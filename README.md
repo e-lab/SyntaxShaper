@@ -13,13 +13,15 @@
 </div>
 
 # Table of contents
-1. [What is this](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-what-is-this)
-2. [Quick Install](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-quick-install)
-3. [Code Usage](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-code-usage)
-4. [Examples (@ samples/)](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#examples--samples)
-5. [GNBF Grammar](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#gnbf-grammar)
-6. [Remarks!](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks)
-7. [Citation](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#citation)
+1. [What is this?](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-what-is-this)
+2. [Results](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-results)
+3. [Features](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-features)
+4. [Installation](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-installation)
+5. [Code Usage](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#-code-usage)
+6. [Examples (@ samples/)](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#examples--samples)
+7. [GNBF Grammar](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#gnbf-grammar)
+8. [Remarks!](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#remarks)
+9. [Citation](https://github.com/e-lab/SyntaxShaper/tree/main?tab=readme-ov-file#citation)
 
 
 ## 🤔 What is this?
@@ -36,15 +38,14 @@ Kindly go through [`Remarks!`](https://github.com/e-lab/SyntaxShaper/tree/main?t
 
 > Please reach out to `araviki[at]purdue[dot]edu` or open an issue on Github if you have any questions or inquiry related to GrammarFlow and its usage.
 
-## Results: 
+## Results
 
 GrammarFlow was tested against popular LLM datasets, with a focus on constraining model outputs. The goal was to ensure that the final parsed output matched both the *structure and data types* of the ground truth. 
 
-[Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/) - Simple grammar (Nested Objects with lists), large prompts. 500 words+.
-
-[StrategyQA](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/strategyqa/task.json) - Simplest grammar (Nested Objects with str/int). 
-
-[ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/) - Requires handling multiple fields in grammar (Single object with list). 
+Some basic tests using Google's [BIG-bench](https://github.com/google/BIG-bench):
+    - [Logic Grid Puzzle](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/logic_grid_puzzle/)
+    - [StrategyQA](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/strategyqa/task.json)
+    - [ReasoningAboutColors](https://github.com/google/BIG-bench/blob/main/bigbench/benchmark_tasks/reasoning_about_colored_objects/)
 
 ```
 |------------------------------------------------------------------------------------------------------|
@@ -58,9 +59,9 @@ GrammarFlow was tested against popular LLM datasets, with a focus on constrainin
 +------------------------------------------------------------------------------------------------------|
 ```
 
-[PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
-
-[HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
+For more complex tests: 
+    - [PrOntoQA](https://github.com/Ber666/llm-reasoners/blob/main/examples/prontoqa/data/345hop_random_true.json) - Chain of Thought reasoning, with randomly-scattered supporting facts in prompt. Taken from [llm-reasoners](https://github.com/Ber666/llm-reasoners/). Tests the ability to place specific reasoning statements in the right place. 
+    - [HotPotQA](http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json) - Multi-hop questions, with strong supervision for supporting facts. Integrated within the first ReAct prompting paper's [code](https://github.com/ysymyth/ReAct). Incremental steps, leading to large prompts.
 
 ```
 |------------------------------------------------------------------------------+-------------------------|
@@ -74,6 +75,15 @@ GrammarFlow was tested against popular LLM datasets, with a focus on constrainin
 |-------------------------------------------------------------------------------+------------------------|
 ```
 
+## Features
+
+GrammarFlow is mainly meant to be an add-on to your existing LLM applications. It works on the input to and output from your `llm()` call, treating everything in between as a black box. It contains pre-made template prompts for local GGUF models like [Llama2 (70B, 13B, 7B)](https://huggingface.co/TheBloke/Upstage-Llama-2-70B-instruct-v2-GGUF), [Mistral](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF), [Mixtral](https://huggingface.co/TheBloke/Synthia-MoE-v3-Mixtral-8x7B-GGUF) and has template grammars for common tasks like Chain-of-Thought and Iterative Agents. Making these prompts and grammars are trivial and require minimal effort, as long as you know the format of what you're building. 
+
+- [X] **GBNF Support**: Converts any Pydantic model to GNBF grammar for using with [llama.cpp](https://github.com/ggerganov/llama.cpp/)'s token-based sampling. Enables adding regex patterns directly through Pydantic's `Field(..., pattern="")`.
+- [x] **Easy Integration**: Integrates with any package or stack by just manipulating the prompt and decoding the result into a pythonic data abstractor. Treats everything in between as a **black box**.
+- [x] **Handles Complex Grammars**: Can handle typing objects ('List', 'Dict', etc.) and nested Pydantic logic with complex data-types.
+- [x] **Experiments with different 'formats'**: Defines grammar rules in XML, JSON and TOML formats. JSON is the standard, while XML is best for nested parsing and TOML is best when you want to get multiple models parsed simulatenously. Each has it's own usecase as described in the [guide](https://github.com/e-lab/SyntaxShaper/blob/main/guide.ipynb).
+- [x] **Reduces hallucinations or garbage results during sampling**: GBNF grammars allow for controlled whitespacing/identation and model ordering, while parsing logic allows for ignoring incorrect terminal symbols.  
 
 ## ⚡ Installation 
 
@@ -92,6 +102,7 @@ cd grammarflow
 pip install . 
 ```
 
+
 ## 📃 Code Usage 
 
 > The [guide](https://github.com/e-lab/SyntaxShaper/blob/main/guide.ipynb) contains an in-depth explanation of all the classes and functions. 
@@ -100,6 +111,7 @@ Map out what your agent chain is doing. Understand what it's goals are and what 
 For example, consider the [ReAct prompting framework](https://react-lm.github.io/). In every call, we want to pass in the Action and subsequent Observation to the next call. 
 
 
+First, some basic imports: 
 ```python
 from grammarflow import * 
 from grammarflow.prompt.template import Agent # Prompt 
@@ -112,7 +124,10 @@ prompt = Agent()
 
 system_context = """Your goal is to think and plan out how to solve questions using agent tools provided to you. Think about all aspects of your thought process."""
 user_message = """Who is Vladmir Putin?"""
+```
 
+Now, to see GrammarFlow's magic: 
+```python
 with Constrain('xml') as manager:
     # Makes the changes to the prompt
     prompt = manager.format(
@@ -125,22 +140,15 @@ with Constrain('xml') as manager:
 
     # Parse the response into a custom dataclass for holding values
     response = manager.parse(llm_response)
+```
 
+Finally, extracting the data: 
+```python
 observation = PerformSomeAction(
   action = response.AgentStep.action, 
   action_input = response.AgentStep.action_input
 ) 
 ```
-
-## Features
-
-GrammarFlow is mainly meant to be an add-on to your existing LLM applications. It works on the input to and output from your `llm()` call, treating everything in between as a black box. It contains pre-made template prompts for local GGUF models like [Llama2 (70B, 13B, 7B)](https://huggingface.co/TheBloke/Upstage-Llama-2-70B-instruct-v2-GGUF), [Mistral](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF), [Mixtral](https://huggingface.co/TheBloke/Synthia-MoE-v3-Mixtral-8x7B-GGUF) and has template grammars for common tasks like Chain-of-Thought and Iterative Agents. Making these prompts and grammars are trivial and require minimal effort, as long as you know the format of what you're building. 
-
-- [X] **GBNF Support**: Converts any Pydantic model to GNBF grammar for using with [llama.cpp](https://github.com/ggerganov/llama.cpp/)'s token-based sampling. Enables adding regex patterns directly through Pydantic's `Field(..., pattern="")`.
-- [x] **Easy Integration**: Integrates with any package or stack by just manipulating the prompt and decoding the result into a pythonic data abstractor. Treats everything in between as a **black box**.
-- [x] **Handles Complex Grammars**: Can handle typing objects ('List', 'Dict', etc.) and nested Pydantic logic with complex data-types.
-- [x] **Experiments with different 'formats'**: Defines grammar rules in XML, JSON and TOML formats. JSON is the standard, while XML is best for nested parsing and TOML is best when you want to get multiple models parsed simulatenously. Each has it's own usecase as described in the [guide](https://github.com/e-lab/SyntaxShaper/blob/main/guide.ipynb).
-- [x] **Reduces hallucinations or garbage results during sampling**: GBNF grammars allow for controlled whitespacing/identation and model ordering, while parsing logic allows for ignoring incorrect terminal symbols.  
 
 
 ### Examples (@ samples/)
@@ -168,16 +176,16 @@ class TaskUpdate(BaseModel):
 class Task(BaseModel):
     title: str
     description: str
-    assigned_to: List[TeamMember]
+    assigned_to: str = Field(..., pattern='("Akshath"|"Raghav"|"Ravikiran")')
     due_date: List[str]
     updates: List[TaskUpdate]
 
 class Project(BaseModel):
     name: str
     description: str
-    project_url: Optional[str] = None
-    team_members: List[TeamMember]
-    grammars: Task
+    project_url: Optional[str] = Field(None, pattern='"https://"[0-9a-fA-F]*')
+    team_members: List[TeamMember]  
+    task: Task
 
 # Convert to grammar
 from grammarflow import GNBF
@@ -191,7 +199,9 @@ GNBF.verify_grammar(grammar, format_='json')
 Results: 
 ```
 root ::= ws Project
-Project ::= nl "{" "\"Project\":" ws "{" ws "\"name\":" ws string "," nl "\"description\":" ws string "," nl "\"project-url\":" ws string "," nl "\"team-members\":" ws TeamMember "," nl "\"grammars\":" ws Task "}" ws "}"
+Project ::= nl "{" "\"Project\":" ws "{" ws "\"name\":" ws string "," nl "\"description\":" ws string "," nl "\"project-url\":" ws project-url "," nl "\"team-members\":" ws TeamMember "," nl "\"task\":" ws Task "}" ws "}"
+project-url ::= "https://"[0-9a-fA-F]*
+assigned-to ::= ("Akshath"|"Raghav"|"Ravikiran")
 ws ::= [ \t\n]
 nl ::= [\n]
 string ::=  "\"" (
@@ -207,7 +217,7 @@ array ::= "[" ws (
                 ("," ws due-date-value)*
             )? "]" ws
 due-date-value ::= string
-Task ::= nl "{" ws "\"title\":" ws string "," nl "\"description\":" ws string "," nl "\"assigned-to\":" ws TeamMember "," nl "\"due-date\":" ws array "," nl "\"updates\":" ws TaskUpdate "}"
+Task ::= nl "{" ws "\"title\":" ws string "," nl "\"description\":" ws string "," nl "\"assigned-to\":" ws assigned-to "," nl "\"due-date\":" ws array "," nl "\"updates\":" ws TaskUpdate "}"
 ```
 
 You can use this grammar to pass into [llama.cpp](https://github.com/ggerganov/llama.cpp/) through a [barebones LLM class](https://github.com/e-lab/SyntaxShaper/blob/main/grammarflow/tools/llm.py) that is provided. 
