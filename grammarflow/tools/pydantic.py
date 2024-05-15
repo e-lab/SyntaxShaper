@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Optional, Type
-
 from pydantic import BaseModel
-
 
 class EmptyModelField(BaseModel):
     default: Optional[str] = None
@@ -9,10 +7,16 @@ class EmptyModelField(BaseModel):
     description: Optional[str] = None
     value: Optional[str] = None
 
-
 class ModelParser:
     @staticmethod
-    def screen_field_info(model: BaseModel):
+    def screen_field_info(model: BaseModel) -> Dict[str, Dict[str, Any]]:  # pylint: disable=missing-function-docstring
+        """
+        Extracts field information from a Pydantic model (not schema).
+
+        Args:
+            model (BaseModel): The Pydantic model.
+        """
+
         temp = {}
 
         for field_name, field_info in model.__fields__.items():
@@ -26,50 +30,70 @@ class ModelParser:
 
             try:
                 temp[field_name]["description"] = field_info.field_info.description
-            except:
+            except BaseException:
                 try:
                     temp[field_name]["description"] = field_info.description
-                except:
+                except BaseException:
                     pass
 
             try:
                 temp[field_name]["value"] = getattr(model, field_name)
-            except:
+            except BaseException:
                 pass
 
         return temp
 
     @staticmethod
-    def screen_model_schema(schema: dict):
+    def screen_model_schema(schema: Dict) -> Dict[str, Dict[str, str]]:
+        """
+        Extracts fields with descriptions from a Pydantic model schema.
+
+        Args:
+            schema (Dict): The schema of a Pydantic model; get using model.schema()
+        """
+
         temp = {}
 
         for field_name in schema["properties"]:
-
             temp[field_name] = {}
             if "anyOf" in schema["properties"][field_name]:
-                temp[field_name]["type"] = " OR ".join([x["type"] for x in schema["properties"][field_name]["anyOf"]])
+                temp[field_name]["type"] = " OR ".join(
+                    [x["type"]
+                     for x in schema["properties"][field_name]["anyOf"]])
             elif "items" in schema["properties"][field_name]:
                 if "$ref" in schema["properties"][field_name]["items"]:
-                    nested_model_name = schema["properties"][field_name]["items"]["$ref"].split("/")[-1]
+                    nested_model_name = schema["properties"][field_name][
+                        "items"]["$ref"].split("/")[-1]
                     temp[field_name]["type"] = "List[" + nested_model_name + "]"
                 else:
-                    temp[field_name]["type"] = "List[" + schema["properties"][field_name]["items"]["type"] + "]"
+                    temp[field_name]["type"] = "List[" + \
+                        schema["properties"][field_name]["items"]["type"] + "]"
             elif "$ref" in schema["properties"][field_name]:
-                temp[field_name]["type"] = schema["properties"][field_name]["$ref"].split("/")[-1]
+                temp[field_name]["type"] = schema["properties"][field_name][
+                    "$ref"].split("/")[-1]
             else:
                 temp[field_name]["type"] = schema["properties"][field_name]["type"]
 
-            temp[field_name]["type"] = temp[field_name]["type"].replace("string", '"string"')
+            temp[field_name]["type"] = temp[field_name]["type"].replace(
+                "string", '"string"')
 
-            temp[field_name]["description"] = schema["properties"][field_name].get("description", None) 
+            temp[field_name]["description"] = schema["properties"][field_name].get(
+                "description", None)
+            temp[field_name]["pattern"] = schema["properties"][field_name].get(
+                "pattern", None)     
 
         return temp
 
     @staticmethod
-    def extract_fields_with_descriptions(model_classes: List[Type[BaseModel]]) -> Dict[str, Dict[str, Dict[str, str]]]:
+    def extract_fields_with_descriptions(
+            model_classes: List[Type[BaseModel]]) -> Dict[str, Dict[str, Dict[str, str]]]:
         """
-        Extracts and returns a dictionary containing descriptions of fields
-        from a list of Pydantic model classes.
+        Extracts fields with descriptions from a list of Pydantic models.
+
+        Args:
+            model_classes (List[Type[BaseModel]]): List of Pydantic models.
+        Returns:
+            A dictionary with model names as keys and field names as keys of the inner dictionary. The inner dictionary contains field descriptions.
         """
 
         def update_dict(d1, d2):
@@ -85,15 +109,19 @@ class ModelParser:
         fields = {}
         nested = 0
 
-        for count, model in enumerate(model_classes):
+        for _, model in enumerate(model_classes):
             temp = {}
             schema = model.schema()
 
             if "definitions" in schema:
                 nested = 1
-                for nested_model_name, nested_model_schema in schema["definitions"].items():
-                    fields[nested_model_name] = ModelParser.screen_model_schema(nested_model_schema)
+                for nested_model_name, nested_model_schema in schema["definitions"].items(
+                ):
+                    fields[nested_model_name] = ModelParser.screen_model_schema(
+                        nested_model_schema)
 
+            # I'm processing the schema and model separately 
+            # Sometimes, the schema doesn't contain all the information I want (issue with pydantic versions and changes)
             update_dict(temp, ModelParser.screen_model_schema(schema))
             update_dict(temp, ModelParser.screen_field_info(model))
 

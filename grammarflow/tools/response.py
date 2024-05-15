@@ -1,7 +1,13 @@
 import json
+from typing import Dict, List, Union
 
 
 class Response:
+    """
+    Dataclass to store the parsed response.
+    Does not enforce type checking, but provides a schema method to extract the schema of the response.
+    """
+
     def __init__(self, data=None):
         if isinstance(data, (dict, list)):
             if isinstance(data, list):
@@ -11,36 +17,39 @@ class Response:
         else:
             self._data = {}
 
-    def __getattr__(self, name):
-        if isinstance(self._data, dict) and name in self._data:
-            if isinstance(self._data[name], (dict, list)):
-                return Response(self._data[name])
-            return self._data[name]
+    def __getattr__(self, key: str):
+        if isinstance(self._data, dict) and key in self._data:
+            if isinstance(self._data[key], (dict, list)):
+                return Response(self._data[key])
+            return self._data[key]
         return None
 
-    def __setattr__(self, name, value):
-        if name == "_data":
-            super().__setattr__(name, value)
+    def __setattr__(self, key: str, value: Union[Dict, List, str]):
+        if key == "_data":
+            super().__setattr__(key, value)
         else:
-            self._data[name] = value
+            if isinstance(value, str):
+                value = value.replace('\\n', '\n')
+            self._data[key] = value
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         if (isinstance(self._data, list) and isinstance(key, int)) or (
             isinstance(self._data, dict) and key in self._data
         ):
             return self._data[key]
         return None
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Union[Dict, List]):
         if isinstance(self._data, dict) or isinstance(self._data, list):
             self._data[key] = value
         else:
-            raise TypeError("Assignment not supported for uninitialized Response objects.")
+            raise TypeError(
+                "Assignment not supported for uninitialized Response objects.")
 
     def __repr__(self):
         return repr(self._data)
 
-    def schema(self, path="", depth=0):
+    def schema(self, path: str = "", depth: int = 0) -> Dict:  # pylint: disable=missing-function-docstring
         schema_dict = {}
         if isinstance(self._data, dict):
             for k, v in self._data.items():
@@ -56,11 +65,10 @@ class Response:
                 schema_dict = item_schema
         else:
             schema_dict = type(self._data).__name__
-
         return schema_dict
 
-    def __str__(self):
-        try :
+    def __str__(self) -> str:
+        try:
             return json.dumps(self._data, indent=4)
-        except: 
+        except BaseException:
             return str(self._data)

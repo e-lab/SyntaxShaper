@@ -30,11 +30,9 @@ def StrategyQA(model_name, get_prompt, llm, verbose=False, **kwargs):
   logs = {'n_badcalls': 0, 'n_calls': 0, 'n_goodcalls': 0, 'n_matchedcall': 0, 'responses': [], 'expected': []}
 
   for ind, example in enumerate(file_['examples'][:n]): 
-    with Constrain(get_prompt(**kwargs)) as manager: 
-      manager.set_config(
-        format='xml'
-      )
-      manager.format_prompt(
+    with Constrain('json') as manager: 
+      template = get_prompt(**kwargs)
+      prompt = manager.format(
         placeholders={
           "instructions": file_['description'],
           "prompt": example['input']
@@ -48,7 +46,7 @@ def StrategyQA(model_name, get_prompt, llm, verbose=False, **kwargs):
       if verbose: 
         print(manager.prompt)
         print('-------------------')
-      response = llm(manager.prompt, grammar=manager.get_grammar(StrategyQAModel), stop_at=manager.stop_at)
+      response = llm(prompt, grammar=manager.get_grammar(StrategyQAModel), stop_at=template.stop_at)
       if response: 
         if verbose:
           print(response)
@@ -83,11 +81,9 @@ def LogicGridPuzzle(model_name, get_prompt, llm, verbose=False, **kwargs):
   logs = {'n_badcalls': 0, 'n_calls': 0, 'n_goodcalls': 0, 'n_matchedcall': 0, 'responses': [], 'expected': []} 
 
   for ind, example in enumerate(file_['examples'][:n]): 
-    with Constrain(get_prompt(**kwargs)) as manager: 
-      manager.set_config(
-        format='xml'
-      )
-      manager.format_prompt(
+    with Constrain('xml') as manager: 
+      template = get_prompt(**kwargs)
+      prompt = manager.format(template, 
         placeholders={
           "instructions": file_['description'],
           "prompt": example['input']
@@ -101,7 +97,7 @@ def LogicGridPuzzle(model_name, get_prompt, llm, verbose=False, **kwargs):
       if verbose: 
         print(manager.prompt)
         print('-------------------')
-      response = llm(manager.prompt, grammar=manager.get_grammar(LogicGridPuzzleModel), stop_at=manager.stop_at)
+      response = llm(prompt, grammar=manager.get_grammar(LogicGridPuzzleModel), stop_at=template.stop_at)
       if response: 
         if verbose:
           print(response)
@@ -139,11 +135,9 @@ def PhysicsQuestions(model_name, get_prompt, llm, verbose=False, **kwargs):
   logs = {'n_badcalls': 0, 'n_calls': 0, 'n_goodcalls': 0, 'n_matchedcall': 0, 'responses': [], 'expected': []} 
 
   for ind, example in enumerate(file_['examples'][:n]): 
-    with Constrain(get_prompt(**kwargs)) as manager: 
-      manager.set_config(
-        format='xml'
-      )
-      manager.format_prompt(
+    with Constrain('json') as manager: 
+      template = get_prompt(**kwargs)
+      prompt = manager.format(template,  
         placeholders={
           "instructions": file_['description'],
           "prompt": example['input']
@@ -156,7 +150,7 @@ def PhysicsQuestions(model_name, get_prompt, llm, verbose=False, **kwargs):
 
       if verbose: 
         print('-------------------')
-      response = llm(manager.prompt, grammar=manager.get_grammar(PhysicsQuestionsModel), stop_at=manager.stop_at)
+      response = llm(prompt, grammar=manager.get_grammar(PhysicsQuestionsModel), stop_at=template.stop_at)
       if response: 
         if verbose:
           print(response)
@@ -193,11 +187,9 @@ def ReasoningAboutColors(model_name, get_prompt, llm, verbose=False, **kwargs):
   logs = {'n_badcalls': 0, 'n_calls': 0, 'n_goodcalls': 0, 'n_matchedcall': 0, 'responses': [], 'expected': []} 
 
   for ind, example in enumerate(file_['examples'][:n]): 
-    with Constrain(get_prompt(**kwargs)) as manager: 
-      manager.set_config(
-        format='json'
-      )
-      manager.format_prompt(
+    with Constrain('json') as manager: 
+      template = get_prompt(**kwargs)
+      prompt = manager.format(template,
         placeholders={
           "instructions": file_['description'],
           "prompt": example['input']
@@ -210,7 +202,7 @@ def ReasoningAboutColors(model_name, get_prompt, llm, verbose=False, **kwargs):
 
       if verbose: 
         print('-------------------')
-      response = llm(manager.prompt, grammar=manager.get_grammar(Colors), stop_at=manager.stop_at)
+      response = llm(prompt, grammar=manager.get_grammar(Colors), stop_at=template.stop_at)
       if response: 
         if verbose:
           print(response)

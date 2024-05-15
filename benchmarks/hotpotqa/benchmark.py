@@ -125,11 +125,9 @@ def webthink(model_name, llm, idx=None, env=None, to_print=False):
       history_ = load_history(history) # Initializes history every run 
 
     # The only major change we've made! 
-    with Constrain(make_prompt(model_name)) as manager: 
-      manager.set_config(
-        format='json'
-      ) 
-      manager.format_prompt(
+    with Constrain('json') as manager: 
+      template = make_prompt(model_name)
+      prompt = manager.format(template, 
         placeholders={ 
           "question": question,
           "history": history_, 
@@ -150,7 +148,7 @@ def webthink(model_name, llm, idx=None, env=None, to_print=False):
         print('Prompt too long. Breaking.')
         done = False 
         break
-      response = llm(manager.prompt, grammar=manager.get_grammar(Step), stop_at=manager.stop_at)
+      response = llm(prompt, grammar=manager.get_grammar(Step), stop_at=template.stop_at)
       n_calls += 1
 
       resp_ = response

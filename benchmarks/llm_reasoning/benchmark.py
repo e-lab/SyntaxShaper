@@ -52,11 +52,9 @@ def RandomTrue(model_name, get_prompt, llm, verbose=False, **kwargs):
 
       row = file_[example_][example__]
       
-      with Constrain(get_prompt(**kwargs)) as manager: 
-        manager.set_config(
-          format='json'
-        )
-        manager.format_prompt(
+      with Constrain('json') as manager: 
+        template = get_prompt(**kwargs)
+        prompt = manager.format(template, 
           placeholders={
             "instructions": "You are a professor of various practices. You like to think through the steps you take in solving your goal. You will be presented with a 'goal'. Solve it by iteratively making observations.",
             "prompt": f"Facts: {row['question']}\n Goal: {row['query']}"
@@ -70,7 +68,7 @@ def RandomTrue(model_name, get_prompt, llm, verbose=False, **kwargs):
         if verbose: 
           print(manager.prompt)
           print('-------------------')
-        response = llm(manager.prompt, grammar=manager.get_grammar(CoT), stop_at=manager.stop_at)
+        response = llm(prompt, grammar=manager.get_grammar(CoT), stop_at=template.stop_at)
         if response: 
           if verbose:
             print(response)
